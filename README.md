@@ -28,12 +28,16 @@ Two separately graded deliverables:
 | `tools/figs.sh` | Produces one figure's worth of output. |
 | `tools/capture.sh` | Takes the eleven terminal figures from VS Code, unattended. |
 | `tools/crop.py` | Trims the empty terminal space off the bottom of those captures. |
+| `tools/dashboard_html.py` | Builds `docs/dashboard.html`, reading every KPI out of the live database. |
+| `tools/mkland.py` | One-off: turns Natural Earth GeoJSON into the vendored world-map path. |
 | `tools/erd_html.py` | Draws `docs/erd.html`, which figure 3 is a capture of. |
+| `tools/data/` | Vendored Natural Earth land path for the dashboard map. |
 | `templates/` | `apa7_template.docx`, vendored so the document builds from a bare checkout. |
 | `finish.md` | The runbook for everything still outstanding. |
 | `tools/finish.sh` | Drives it: `check`, `shots`, `build`, `publish`, `all`. |
 | `tools/sync_repo.sh` | Copies the deliverables into the public repo and pushes. |
 | `docs/SCREENSHOTS.md` | The twelve-figure capture checklist. |
+| `docs/dashboard.html` | Dark-mode KPI dashboard: traffic, DAU/MAU, revenue, geography. |
 | `docs/erd.html` | Self-contained interactive ERD. |
 | `docs/design_spec.html` | One-page design spec. |
 | `parts/README.md` | What each section of the script does, and why each view earns its place. |

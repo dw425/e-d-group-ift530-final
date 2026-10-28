@@ -199,6 +199,13 @@ index while that is true; a repo inside a repo only half works.
 
 - Repo — <https://github.com/dw425/e-d-group-ift530-final>
 - Site — <https://dw425.github.io/e-d-group-ift530-final/>
+- ERD — <https://dw425.github.io/e-d-group-ift530-final/erd.html>
+- Dashboard — <https://dw425.github.io/e-d-group-ift530-final/dashboard.html>
+
+The four published pages carry the same navigation bar, so any one of them
+reaches the other three. The dashboard is rebuilt from the live database
+with `/usr/local/bin/python3 tools/dashboard_html.py`; it is not part of
+the graded submission, so it never blocks a step above.
 
 ---
 

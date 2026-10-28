@@ -28,6 +28,14 @@
   a.card:hover { border-color:var(--accent); }
   a.card b { display:block; color:var(--accent); font-size:14.5px; }
   a.card span { color:var(--muted); font-size:13px; }
+  .sitenav { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 18px; }
+  .sitenav a { display:inline-block; padding:7px 13px; border:1px solid var(--line);
+    border-radius:7px; background:var(--card,#fff); color:var(--ink);
+    font-size:12.5px; font-weight:500; text-decoration:none; }
+  .sitenav a:hover { border-color:var(--accent); color:var(--accent); }
+  .sitenav a.on { border-color:var(--accent); color:var(--accent);
+    box-shadow:inset 0 0 0 1px var(--accent); }
+  @media print { .sitenav { display:none; } }
   .stats { display:flex; flex-wrap:wrap; gap:8px; padding:0; margin:0 0 8px;
            list-style:none; }
   .stats li { background:var(--card); border:1px solid var(--line);
@@ -52,6 +60,12 @@
 </head>
 <body>
 <div class="wrap">
+  <nav class="sitenav">
+    <a class="on" href="index.html">Project home</a>
+    <a href="erd.html">ERD</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="design_spec.html">Design spec</a>
+  </nav>
   <h1>E &amp; D Group &mdash; IFT 530 Final Project</h1>
   <p class="sub">Player analytics for a live, free-to-play online game.</p>
   <p class="meta">Ethan Oxley, Daniel Warren &middot; Arizona State University
@@ -69,6 +83,11 @@
       <span>All ten tables, every foreign key, and the row counts checked
         against what the assignment requires. Hover a table to isolate its
         relationships.</span></a></li>
+    <li><a class="card" href="dashboard.html">
+      <b>Player Analytics Dashboard</b>
+      <span>Thirteen live-ops KPIs, the DAU and rolling 30-day trend, a world
+        map of where the traffic comes from, revenue by plan and the flagged
+        payments &mdash; every number read out of the database.</span></a></li>
     <li><a class="card" href="design_spec.html">
       <b>Design Spec</b>
       <span>One page: grain, keys, constraints, the three views, and the
