@@ -234,8 +234,10 @@ Still read the PDF before you submit.
 
 Neither of these affects your grade.
 
-**Drop the old database.** `DWarrenGroup` is still on the server from
-before the group rename. Nothing points at it.
+**The old database is already gone.** `DWarrenGroup`, from before the
+group rename, is not on this machine — the server carries `E_D_Group`,
+`IFT530_Assignment`, `AP` and `MyGuitarShop` and nothing else. If you are
+on a machine that still has it, nothing points at it:
 
 ```bash
 sqlcmd -S localhost,1433 -U sa -C -Q "DROP DATABASE DWarrenGroup;"
@@ -263,7 +265,7 @@ settings page for each repo does it without one.
 running:
 
 ```bash
-cd ~/Documents/IFT_Course && ./tools/mssql.sh start
+cd ~/Documents/School/IFT_Course && ./tools/mssql.sh start
 ```
 
 **The data looks wrong in a figure** — rebuild the database from the

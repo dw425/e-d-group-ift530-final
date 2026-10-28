@@ -255,19 +255,19 @@ def build():
     w, h = layout()
     parts = []
 
-    # marker defs, one pair per parent colour
+    # marker defs, one pair per parent color
     defs = ['<defs>']
-    for parent, colour in COLORS.items():
+    for parent, color in COLORS.items():
         key = parent.lower()
         defs.append(
             f'<marker id="crow-{key}" viewBox="0 0 12 12" refX="11" refY="6" '
             f'markerWidth="11" markerHeight="11" orient="auto">'
             f'<path d="M1,6 L11,1 M1,6 L11,6 M1,6 L11,11" fill="none" '
-            f'stroke="{colour}" stroke-width="1.4"/></marker>')
+            f'stroke="{color}" stroke-width="1.4"/></marker>')
         defs.append(
             f'<marker id="one-{key}" viewBox="0 0 12 12" refX="1" refY="6" '
             f'markerWidth="11" markerHeight="11" orient="auto">'
-            f'<path d="M1,1.5 L1,10.5" fill="none" stroke="{colour}" '
+            f'<path d="M1,1.5 L1,10.5" fill="none" stroke="{color}" '
             f'stroke-width="1.8"/></marker>')
     defs.append('</defs>')
     parts.append("\n".join(defs))
@@ -276,10 +276,10 @@ def build():
     parts.append('<g id="links">')
     for cons, child, ccol, parent, pcol in FKS:
         d, _, _ = connector(child, ccol, parent, pcol)
-        colour, key = COLORS[parent], parent.lower()
+        color, key = COLORS[parent], parent.lower()
         parts.append(
             f'<path class="lnk" data-con="{cons}" data-a="{parent}" data-b="{child}" '
-            f'd="{d}" fill="none" stroke="{colour}" stroke-width="1.6" '
+            f'd="{d}" fill="none" stroke="{color}" stroke-width="1.6" '
             f'marker-start="url(#one-{key})" marker-end="url(#crow-{key})"/>')
     parts.append('</g>')
 
@@ -459,7 +459,7 @@ HTML = r"""<!doctype html>
   </header>
 
   <div class="panel">
-    <p class="hint">Hover a table to isolate its relationships. Line colour follows the parent table.</p>
+    <p class="hint">Hover a table to isolate its relationships. Line color follows the parent table.</p>
     {{SVG}}
   </div>
 

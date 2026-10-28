@@ -6,9 +6,9 @@ twelve exist, so this is the last blocking step before submission.
 
 ## Before you start
 
-    cd ~/Documents/IFT_Course
+    cd ~/Documents/School/IFT_Course
     source .env && ./tools/mssql.sh start
-    cd courses/IFT530/FinalProject
+    cd courses/IFT530/Final_Project
 
 Every figure except the ERD comes from one `tools/figs.sh` target, which
 prints the header block of the submitted script above its own
