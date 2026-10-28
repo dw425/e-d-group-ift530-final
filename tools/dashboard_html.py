@@ -11,11 +11,15 @@ script has been executed:
 The world map is a vendored Natural Earth path; see tools/data/README.md.
 """
 import os
+import sys
 import subprocess
 import sys
 from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import site_chrome  # noqa: E402
 
 HERE = Path(__file__).resolve().parent.parent
 DB = "E_D_Group"
@@ -26,11 +30,12 @@ MAP_W, MAP_H = 1000.0, 394.4
 LAT_MAX, LAT_MIN = 84.0, -58.0
 
 C = {
-    "bg": "#0a0e13", "panel": "#121a23", "panel2": "#0f161e",
-    "line": "#1e2a36", "text": "#e6edf3", "mute": "#8b98a5",
-    "dim": "#5d6b7a",
-    "teal": "#2dd4bf", "blue": "#60a5fa", "violet": "#a78bfa",
-    "amber": "#fbbf24", "rose": "#fb7185", "green": "#34d399",
+    "bg": "var(--bg)", "panel": "var(--surface)", "panel2": "var(--surface-2)",
+    "line": "var(--border)", "text": "var(--text)", "mute": "var(--muted)",
+    "dim": "var(--dim)",
+    "teal": "var(--c-teal)", "blue": "var(--c-blue)",
+    "violet": "var(--c-violet)", "amber": "var(--c-amber)",
+    "rose": "var(--c-rose)", "green": "var(--c-green)",
 }
 
 
@@ -280,89 +285,55 @@ def chart_levels(d):
 # ------------------------------------------------------------------ page
 
 CSS = """
-*{box-sizing:border-box}
-body{margin:0;background:%(bg)s;color:%(text)s;
- font:14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,
- Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:%(blue)s;text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:1180px;margin:0 auto;padding:28px 22px 56px}
-header{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;
- justify-content:space-between;padding-bottom:18px;
- border-bottom:1px solid %(line)s;margin-bottom:22px}
-h1{margin:0;font-size:23px;letter-spacing:-.3px;font-weight:650}
-.sub{color:%(mute)s;font-size:13px;margin-top:5px}
-.sitenav{display:flex;gap:8px;flex-wrap:wrap}
-.sitenav a{display:inline-block;padding:7px 13px;border:1px solid %(line)s;
- border-radius:7px;background:%(panel)s;color:%(text)s;font-size:12.5px;
- font-weight:500}
-.sitenav a:hover{border-color:%(teal)s;color:%(teal)s;text-decoration:none}
-.sitenav a.on{border-color:%(teal)s;color:%(teal)s}
-h2{font-size:12px;text-transform:uppercase;letter-spacing:.9px;
- color:%(mute)s;margin:0 0 3px;font-weight:600}
-.note{color:%(dim)s;font-size:12px;margin:0 0 14px}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));
  gap:12px;margin-bottom:24px}
-.kpi{background:%(panel)s;border:1px solid %(line)s;border-radius:11px;
- padding:14px 15px}
-.kpi-l{color:%(mute)s;font-size:11px;text-transform:uppercase;
- letter-spacing:.7px;font-weight:600}
-.kpi-v{font-size:26px;font-weight:660;margin:7px 0 2px;
- letter-spacing:-.6px;font-variant-numeric:tabular-nums}
-.kpi-s{color:%(dim)s;font-size:11.5px}
+.kpi{background:var(--surface);border:1px solid var(--border);
+ border-radius:11px;padding:14px 15px;box-shadow:var(--shadow)}
+.kpi-l{color:var(--muted);font-size:11px;text-transform:uppercase;
+ letter-spacing:.7px;font-weight:620}
+.kpi-v{font-size:26px;font-weight:660;margin:7px 0 2px;letter-spacing:-.6px;
+ font-variant-numeric:tabular-nums}
+.kpi-s{color:var(--dim);font-size:11.5px}
 .grid{display:grid;gap:16px;margin-bottom:16px}
 .g2{grid-template-columns:1fr 1fr}
-.g3{grid-template-columns:1fr 1fr 1fr}
-.card{background:%(panel)s;border:1px solid %(line)s;border-radius:12px;
- padding:17px 18px 15px}
-.chart{width:100%%;height:auto;display:block;overflow:visible}
-.grid line,.grid{stroke:%(line)s}
-line.grid{stroke:%(line)s;stroke-width:1}
-line.mgrid{stroke:#182330;stroke-width:1}
-text.ax{fill:%(dim)s;font-size:11px;
- font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-text.mlab{fill:#cbd5e1;font-size:11px;font-weight:600;paint-order:stroke;stroke:%(panel2)s;stroke-width:3px;stroke-linejoin:round;
- font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-polyline.mau{fill:none;stroke:%(violet)s;stroke-width:2.2;
+.chart{width:100%;height:auto;display:block;overflow:visible}
+line.grid{stroke:var(--border);stroke-width:1}
+line.mgrid{stroke:var(--border-soft);stroke-width:1}
+text.ax{fill:var(--dim);font-size:11px;font-family:var(--sans)}
+text.mlab{fill:var(--text);font-size:11px;font-weight:620;
+ font-family:var(--sans);paint-order:stroke;stroke:var(--surface-2);
+ stroke-width:3px;stroke-linejoin:round}
+polyline.mau{fill:none;stroke:var(--c-violet);stroke-width:2.2;
  stroke-linejoin:round;stroke-linecap:round}
-circle.dot{fill:%(violet)s;stroke:%(panel)s;stroke-width:2}
+circle.dot{fill:var(--c-violet);stroke:var(--surface);stroke-width:2}
 rect.bar:hover,circle.bub:hover{opacity:.82}
-.map{width:100%%;height:auto;display:block;background:%(panel2)s;
- border-radius:9px;border:1px solid %(line)s}
-path.land{fill:#1b2733;stroke:#243343;stroke-width:.6}
-circle.bub{opacity:.72;stroke:%(bg)s;stroke-width:1.2;cursor:pointer}
-.legend{display:flex;gap:15px;flex-wrap:wrap;color:%(mute)s;font-size:11.5px;
- margin-top:11px}
-.sw{display:inline-block;width:9px;height:9px;border-radius:50%%;
+.map{width:100%;height:auto;display:block;background:var(--surface-2);
+ border-radius:9px;border:1px solid var(--border)}
+path.land{fill:var(--land);stroke:var(--land-edge);stroke-width:.6}
+circle.bub{opacity:.78;stroke:var(--surface-2);stroke-width:1.2;
+ cursor:pointer}
+:root{--land:#dde5ee;--land-edge:#c6d2e0}
+[data-theme="dark"]{--land:#1b2733;--land-edge:#243343}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"])
+ {--land:#1b2733;--land-edge:#243343}}
+.legend{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);
+ font-size:11.5px;margin-top:11px}
+.sw{display:inline-block;width:9px;height:9px;border-radius:50%;
  margin-right:6px;vertical-align:middle}
 .hb{display:grid;grid-template-columns:132px 1fr 60px;
  grid-template-areas:'l t v' '. s s';gap:3px 11px;align-items:center;
  margin-bottom:11px}
-.hb-l{grid-area:l;color:%(text)s;font-size:12.5px;font-weight:500;
+.hb-l{grid-area:l;color:var(--text);font-size:12.5px;font-weight:520;
  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hb-t{grid-area:t;background:%(panel2)s;border-radius:5px;height:9px;
+.hb-t{grid-area:t;background:var(--surface-2);border-radius:5px;height:9px;
  overflow:hidden}
-.hb-f{height:100%%;border-radius:5px}
-.hb-v{grid-area:v;text-align:right;font-size:12.5px;font-weight:600;
+.hb-f{height:100%;border-radius:5px}
+.hb-v{grid-area:v;text-align:right;font-size:12.5px;font-weight:620;
  font-variant-numeric:tabular-nums}
-.hb-s{grid-area:s;color:%(dim)s;font-size:11px}
-.tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;
- font-weight:650;text-transform:uppercase;letter-spacing:.4px;margin-left:5px}
-.tag.rose{background:rgba(251,113,133,.15);color:%(rose)s}
-.tag.amber{background:rgba(251,191,36,.15);color:%(amber)s}
-.tag.green{background:rgba(52,211,153,.15);color:%(green)s}
-table{width:100%%;border-collapse:collapse;font-size:12.5px}
-th{text-align:left;color:%(mute)s;font-weight:600;font-size:11px;
- text-transform:uppercase;letter-spacing:.6px;padding:0 8px 8px 0;
- border-bottom:1px solid %(line)s}
-td{padding:8px 8px 8px 0;border-bottom:1px solid #16212c;
- font-variant-numeric:tabular-nums}
-tr:last-child td{border-bottom:0}
-td.r,th.r{text-align:right}
-footer{margin-top:30px;padding-top:18px;border-top:1px solid %(line)s;
- color:%(dim)s;font-size:12px;line-height:1.7}
-@media(max-width:860px){.g2,.g3{grid-template-columns:1fr}}
-""" % C
+.hb-s{grid-area:s;color:var(--dim);font-size:11px}
+.card h2{margin:0 0 3px}
+@media(max-width:860px){.g2{grid-template-columns:1fr}}
+"""
 
 
 def build(d):
@@ -465,32 +436,26 @@ def build(d):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>E &amp; D Group - Player Analytics Dashboard</title>
+{site_chrome.HEAD}
 <style>{CSS}</style>
 </head><body>
+{site_chrome.topbar("dashboard.html")}
 <div class="wrap">
 
-<header>
-  <div>
-    <h1>Player Analytics Dashboard</h1>
-    <div class="sub">E &amp; D Group &middot; <code>E_D_Group</code>
-      &middot; live-ops KPIs read straight from the database</div>
-  </div>
-  <nav class="sitenav">
-    <a href="index.html">Project home</a>
-    <a href="erd.html">ERD</a>
-    <a class="on" href="dashboard.html">Dashboard</a>
-    <a href="design_spec.html">Design spec</a>
-  </nav>
-</header>
+<div class="pagehead">
+  <h1>Player Analytics Dashboard</h1>
+  <p class="sub">E &amp; D Group &middot; <code>E_D_Group</code>
+    &middot; live-ops KPIs read straight from the database</p>
+</div>
 
-<h2>Headline KPIs</h2>
+<p class="eyebrow">Headline KPIs</p>
 <p class="note">Thirteen measures, every one computed at build time from
   the tables, views and stored procedure the submitted script creates.</p>
 <div class="kpis">{''.join(k)}</div>
 
 <div class="grid g2">
   <div class="card" style="grid-column:1/-1">
-    <h2>Traffic &mdash; daily active users and the rolling 30-day count</h2>
+    <p class="eyebrow">Traffic &mdash; daily active users and the rolling 30-day count</p>
     <p class="note">Bars are that day's active players split paid against
       free; the line is the rolling 30-day active count. Days nobody
       played are absent, which is why there are {len(d['dau'])} points and
@@ -507,7 +472,7 @@ def build(d):
   </div>
 
   <div class="card" style="grid-column:1/-1">
-    <h2>Where the players are</h2>
+    <p class="eyebrow">Where the players are</p>
     <p class="note">One bubble per location in
       <code>DimGeography</code>, sized by the events recorded there and
       colored by the risk tier the fraud view reads. Hover for the
@@ -525,43 +490,43 @@ def build(d):
   </div>
 
   <div class="card">
-    <h2>Net revenue by plan</h2>
+    <p class="eyebrow">Net revenue by plan</p>
     <p class="note">The free tier out-earns every single paid plan, on
       one-time store purchases.</p>
     {hbars(plan_rows, plan_col, lambda v: '$' + fnum(v, 2))}
   </div>
 
   <div class="card">
-    <h2>Level difficulty</h2>
+    <p class="eyebrow">Level difficulty</p>
     <p class="note">Win rate per level, from the same data the cursor
       walks. Under 50% is flagged as a churn risk.</p>
     {chart_levels(d)}
   </div>
 
   <div class="card">
-    <h2>Traffic mix by event type</h2>
+    <p class="eyebrow">Traffic mix by event type</p>
     {hbars(ev_rows, ev_col, lambda v: fnum(v))}
   </div>
 
   <div class="card">
-    <h2>Platform mix</h2>
+    <p class="eyebrow">Platform mix</p>
     {hbars(dev_rows, dev_col, lambda v: fnum(v))}
   </div>
 
   <div class="card">
-    <h2>Subscription movement</h2>
+    <p class="eyebrow">Subscription movement</p>
     <p class="note">Lifecycle events and what each did to monthly
       recurring revenue.</p>
     {hbars(sub_rows, sub_col, lambda v: fnum(v))}
   </div>
 
   <div class="card">
-    <h2>Player lifecycle</h2>
+    <p class="eyebrow">Player lifecycle</p>
     {hbars(stage_rows, stage_col, lambda v: fnum(v))}
   </div>
 
   <div class="card">
-    <h2>Monthly active users</h2>
+    <p class="eyebrow">Monthly active users</p>
     <p class="note">Straight from
       <code>spMonthlyActiveUsers @Year=2026</code>.</p>
     <table><thead><tr><th>Month</th><th class="r">MAU</th>
@@ -571,14 +536,14 @@ def build(d):
   </div>
 
   <div class="card">
-    <h2>Flagged payments</h2>
+    <p class="eyebrow">Flagged payments</p>
     <p class="note">{d['flagged']} of {d['payments']} payments caught by
       <code>vwSuspiciousTransactions</code>, by reason.</p>
     {hbars(reason_rows, reason_col, lambda v: fnum(v))}
   </div>
 
   <div class="card" style="grid-column:1/-1">
-    <h2>Traffic concentration by location</h2>
+    <p class="eyebrow">Traffic concentration by location</p>
     <table><thead><tr><th>City</th><th>Country</th>
       <th class="r">Events</th><th class="r">Players</th>
       <th class="r">Risk tier</th></tr></thead>
@@ -586,7 +551,7 @@ def build(d):
   </div>
 </div>
 
-<footer>
+<footer class="sitefoot">
   Built by <code>tools/dashboard_html.py</code> from the live
   <code>E_D_Group</code> database on {built}. Every figure on this page is
   a query against the tables, views and stored procedure created by
@@ -599,7 +564,9 @@ def build(d):
   <code>tools/data/README.md</code>.
 </footer>
 
-</div></body></html>
+</div>
+{site_chrome.FOOT}
+</body></html>
 """
 
 

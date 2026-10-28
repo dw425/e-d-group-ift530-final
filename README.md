@@ -41,9 +41,42 @@ Two separately graded deliverables:
 | `docs/erd.html` | Self-contained interactive ERD. |
 | `docs/design_spec.html` | One-page design spec. |
 | `parts/README.md` | What each section of the script does, and why each view earns its place. |
+| `docker-compose.yml` | Pins the exact SQL Server image; `docker compose up -d` stands the server up. |
+| `.env.example` | The one variable needed: `MSSQL_SA_PASSWORD`. Copy to `.env`, never commit it. |
 | `database/E_D_Group.bak` | A restorable backup of the built, populated database. |
 | `database/DATA_DICTIONARY.md` | Every column and constraint, read out of the live catalog. |
 | `tools/dbdoc.py` | Generates that dictionary from the running server. |
+
+## The server
+
+The SQL Server **image is not in this repo** — it is Microsoft's, it is
+about 2.4 GB, and nothing that size belongs in git. What is here is the
+part that makes it reproducible: `docker-compose.yml` pins the exact image
+this project was built and tested against, so the same server comes up
+anywhere.
+
+    cp .env.example .env        # then put a real password in it
+    source .env
+    docker compose up -d        # pulls mcr.microsoft.com/mssql/server:2025-latest
+
+Apple Silicon runs the x86-64 image under Rosetta; there is no native
+macOS or arm64 build of SQL Server. The password is read from the
+environment and is never committed — `.env` is gitignored.
+
+Then either **run the script**, which builds the database from nothing:
+
+    sqlcmd -S localhost,1433 -U sa -C -i IFT530_EDGroup_FinalProject.sql
+
+or **restore the backup** of the built, populated database:
+
+    docker cp database/E_D_Group.bak ift530-sql:/var/opt/mssql/
+    sqlcmd -S localhost,1433 -U sa -C -Q "RESTORE DATABASE E_D_Group \
+      FROM DISK='/var/opt/mssql/E_D_Group.bak' WITH \
+      MOVE 'E_D_Group' TO '/var/opt/mssql/data/E_D_Group.mdf', \
+      MOVE 'E_D_Group_log' TO '/var/opt/mssql/data/E_D_Group_log.ldf';"
+
+The script is the deliverable and the backup is the convenience; either
+one gets you the same ten tables and 161 rows.
 
 ## Rebuild
 

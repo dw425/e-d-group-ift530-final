@@ -4,28 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>E &amp; D Group ERD</title>
+<link rel="stylesheet" href="site.css">
+<script>try{var t=localStorage.getItem('edg-theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <style>
-  :root {
-    --ink:#111827; --muted:#6b7280; --line:#d1d5db; --bg:#f3f4f6;
-    --card:#ffffff; --accent:#1e3a5f;
-  }
-  * { box-sizing:border-box; }
-  body {
-    margin:0; padding:28px 16px 56px; background:var(--bg); color:var(--ink);
-    font:14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  }
-  .wrap { max-width:1120px; margin:0 auto; }
   header { margin-bottom:18px; }
-  h1 { margin:0 0 4px; font-size:24px; letter-spacing:-0.01em; }
-  .sub { color:var(--muted); margin:0; }
-  .sitenav { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 18px; }
-  .sitenav a { display:inline-block; padding:7px 13px; border:1px solid var(--line);
-    border-radius:7px; background:var(--card,#fff); color:var(--ink);
-    font-size:12.5px; font-weight:500; text-decoration:none; }
-  .sitenav a:hover { border-color:var(--accent); color:var(--accent); }
-  .sitenav a.on { border-color:var(--accent); color:var(--accent);
-    box-shadow:inset 0 0 0 1px var(--accent); }
-  @media print { .sitenav { display:none; } }
   .stats { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0; padding:0; list-style:none; }
   .stats li {
     background:var(--card); border:1px solid var(--line); border-radius:999px;
@@ -38,18 +20,19 @@
   }
   .hint { color:var(--muted); font-size:12px; margin:0 0 10px; }
   svg { display:block; max-width:100%; height:auto; }
-  .shadow { fill:#000; opacity:.07; }
-  .box { stroke:#cbd5e1; stroke-width:1; }
-  .zebra { fill:#f8fafc; }
+  .shadow { fill:#000; opacity:.06; }
+  .box { stroke:var(--border); stroke-width:1; }
+  .zebra { fill:var(--surface-2); }
   .tname { fill:#fff; font:600 13px ui-monospace, SFMono-Regular, Menlo, monospace; }
   .tkind { fill:#ffffff; opacity:.62; font:600 9px -apple-system, sans-serif; letter-spacing:.09em; }
-  .col  { fill:#1f2937; font:12px ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .col  { fill:var(--text); font:12px ui-monospace, SFMono-Regular, Menlo, monospace; }
   .col.pk { font-weight:700; }
-  .typ  { fill:#6b7280; font:10.5px ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .typ.null { fill:#9ca3af; font-style:italic; }
+  .typ  { fill:var(--muted); font:10.5px ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .typ.null { fill:var(--dim); font-style:italic; }
   .badge { font:700 8.5px -apple-system, sans-serif; }
-  .b-pk { fill:#b45309; } .b-fk { fill:#1d4ed8; } .b-dd { fill:#7c3aed; }
-  .rowcount { fill:#9ca3af; font:9.5px -apple-system, sans-serif; }
+  .b-pk { fill:var(--c-amber); } .b-fk { fill:var(--c-blue); }
+  .b-dd { fill:var(--c-violet); }
+  .rowcount { fill:var(--dim); font:9.5px -apple-system, sans-serif; }
   .lnk { opacity:.85; }
 
   /* hover isolation - 15 keys cross, so let one table answer at a time */
@@ -66,7 +49,7 @@
     letter-spacing:.05em; text-transform:uppercase; padding:6px 10px;
     border-bottom:1px solid var(--line);
   }
-  table.fks td { padding:5px 10px; border-bottom:1px solid #f1f5f9; }
+  table.fks td { padding:5px 10px; border-bottom:1px solid var(--border-soft); }
   table.fks code { font:11.5px ui-monospace, SFMono-Regular, Menlo, monospace; }
   table.vol { border-collapse:collapse; width:100%; font-size:12.5px; }
   table.vol th {
@@ -74,21 +57,20 @@
     text-transform:uppercase; letter-spacing:.04em; padding:0 10px 6px;
     border-bottom:1px solid var(--line);
   }
-  table.vol td { padding:5px 10px; border-bottom:1px solid #f1f5f9; }
+  table.vol td { padding:5px 10px; border-bottom:1px solid var(--border-soft); }
   table.vol code { font:11.5px ui-monospace, SFMono-Regular, Menlo, monospace; }
   table.vol .num { text-align:right; font-variant-numeric:tabular-nums; }
   .ok, .bad, .na {
     font-size:11px; font-weight:600; padding:1px 7px; border-radius:999px;
   }
-  .ok  { background:#dcfce7; color:#14532d; }
-  .bad { background:#fee2e2; color:#7f1d1d; }
-  .na  { background:#f1f5f9; color:#475569; font-weight:500; }
+  .ok  { background:var(--c-green-soft); color:var(--c-green); }
+  .bad { background:var(--c-rose-soft); color:var(--c-rose); }
+  .na  { background:var(--surface-2); color:var(--muted); font-weight:500; }
   .dot {
     display:inline-block; width:8px; height:8px; border-radius:50%;
     margin-right:7px; vertical-align:middle;
   }
-  h2 { font-size:15px; margin:0 0 10px; }
-  footer { color:var(--muted); font-size:11.5px; margin-top:22px; text-align:center; }
+  footer { color:var(--dim); font-size:11.5px; margin-top:22px; text-align:center; }
 
   @media print {
     @page { size:letter landscape; margin:9mm; }
@@ -112,13 +94,20 @@
 </style>
 </head>
 <body>
+<div class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="index.html"><span class="mark"></span>E &amp; D Group</a>
+    <nav class="sitenav">
+      <a href="index.html">Home</a>
+      <a class="on" href="erd.html">ERD</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="design_spec.html">Design spec</a>
+    </nav>
+    <button class="themetoggle" type="button" aria-label="Switch theme"><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.1 5.1l1.6 1.6M17.3 17.3l1.6 1.6M18.9 5.1l-1.6 1.6M6.7 17.3l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.3A8.5 8.5 0 1 1 9.7 3.5a6.8 6.8 0 0 0 10.8 10.8z"/></svg></button>
+  </div>
+</div>
+
 <div class="wrap">
-  <nav class="sitenav">
-    <a href="index.html">Project home</a>
-    <a class="on" href="erd.html">ERD</a>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="design_spec.html">Design spec</a>
-  </nav>
   <header>
     <h1>E &amp; D Group &mdash; Entity Relationship Diagram</h1>
     <p class="sub">Online game live-ops analytics &middot; star schema &middot; IFT 530 Final Project</p>
@@ -169,7 +158,7 @@
 </g>
 <g class="tbl" data-table="DimGeography">
 <rect class="shadow" x="42" y="53" width="280" height="182" rx="7"/>
-<rect class="box" x="40" y="50" width="280" height="182" rx="7" fill="#ffffff"/>
+<rect class="box" x="40" y="50" width="280" height="182" rx="7" fill="var(--surface)"/>
 <path class="hd" d="M40,57 a7,7 0 0 1 7,-7 h266 a7,7 0 0 1 7,7 v23 h-280 z" fill="#1e3a5f"/>
 <text class="tname" x="50" y="70">DimGeography</text>
 <text class="tkind" x="310" y="70" text-anchor="end">DIMENSION</text>
@@ -198,7 +187,7 @@
 </g>
 <g class="tbl" data-table="DimCampaign">
 <rect class="shadow" x="42" y="275" width="280" height="164" rx="7"/>
-<rect class="box" x="40" y="272" width="280" height="164" rx="7" fill="#ffffff"/>
+<rect class="box" x="40" y="272" width="280" height="164" rx="7" fill="var(--surface)"/>
 <path class="hd" d="M40,279 a7,7 0 0 1 7,-7 h266 a7,7 0 0 1 7,7 v23 h-280 z" fill="#1e3a5f"/>
 <text class="tname" x="50" y="292">DimCampaign</text>
 <text class="tkind" x="310" y="292" text-anchor="end">DIMENSION</text>
@@ -224,7 +213,7 @@
 </g>
 <g class="tbl" data-table="DimProduct">
 <rect class="shadow" x="42" y="479" width="280" height="146" rx="7"/>
-<rect class="box" x="40" y="476" width="280" height="146" rx="7" fill="#ffffff"/>
+<rect class="box" x="40" y="476" width="280" height="146" rx="7" fill="var(--surface)"/>
 <path class="hd" d="M40,483 a7,7 0 0 1 7,-7 h266 a7,7 0 0 1 7,7 v23 h-280 z" fill="#1e3a5f"/>
 <text class="tname" x="50" y="496">DimProduct</text>
 <text class="tkind" x="310" y="496" text-anchor="end">DIMENSION</text>
@@ -248,7 +237,7 @@
 </g>
 <g class="tbl" data-table="DimPlan">
 <rect class="shadow" x="42" y="665" width="280" height="182" rx="7"/>
-<rect class="box" x="40" y="662" width="280" height="182" rx="7" fill="#ffffff"/>
+<rect class="box" x="40" y="662" width="280" height="182" rx="7" fill="var(--surface)"/>
 <path class="hd" d="M40,669 a7,7 0 0 1 7,-7 h266 a7,7 0 0 1 7,7 v23 h-280 z" fill="#1e3a5f"/>
 <text class="tname" x="50" y="682">DimPlan</text>
 <text class="tkind" x="310" y="682" text-anchor="end">DIMENSION</text>
@@ -277,7 +266,7 @@
 </g>
 <g class="tbl" data-table="DimUser">
 <rect class="shadow" x="382" y="53" width="280" height="254" rx="7"/>
-<rect class="box" x="380" y="50" width="280" height="254" rx="7" fill="#ffffff"/>
+<rect class="box" x="380" y="50" width="280" height="254" rx="7" fill="var(--surface)"/>
 <path class="hd" d="M380,57 a7,7 0 0 1 7,-7 h266 a7,7 0 0 1 7,7 v23 h-280 z" fill="#1e3a5f"/>
 <text class="tname" x="390" y="70">DimUser</text>
 <text class="tkind" x="650" y="70" text-anchor="end">DIMENSION</text>
@@ -319,7 +308,7 @@
 </g>
 <g class="tbl" data-table="DimAccount">
 <rect class="shadow" x="382" y="347" width="280" height="200" rx="7"/>
-<rect class="box" x="380" y="344" width="280" height="200" rx="7" fill="#ffffff"/>
+<rect class="box" x="380" y="344" width="280" height="200" rx="7" fill="var(--surface)"/>
 <path class="hd" d="M380,351 a7,7 0 0 1 7,-7 h266 a7,7 0 0 1 7,7 v23 h-280 z" fill="#1e3a5f"/>
 <text class="tname" x="390" y="364">DimAccount</text>
 <text class="tkind" x="650" y="364" text-anchor="end">DIMENSION</text>
@@ -353,7 +342,7 @@
 </g>
 <g class="tbl" data-table="DimPlanAudit">
 <rect class="shadow" x="382" y="587" width="280" height="236" rx="7"/>
-<rect class="box" x="380" y="584" width="280" height="236" rx="7" fill="#ffffff"/>
+<rect class="box" x="380" y="584" width="280" height="236" rx="7" fill="var(--surface)"/>
 <path class="hd" d="M380,591 a7,7 0 0 1 7,-7 h266 a7,7 0 0 1 7,7 v23 h-280 z" fill="#44403c"/>
 <text class="tname" x="390" y="604">DimPlanAudit</text>
 <text class="tkind" x="650" y="604" text-anchor="end">AUDIT</text>
@@ -389,7 +378,7 @@
 </g>
 <g class="tbl" data-table="FactUserEvent">
 <rect class="shadow" x="722" y="53" width="280" height="218" rx="7"/>
-<rect class="box" x="720" y="50" width="280" height="218" rx="7" fill="#ffffff"/>
+<rect class="box" x="720" y="50" width="280" height="218" rx="7" fill="var(--surface)"/>
 <path class="hd" d="M720,57 a7,7 0 0 1 7,-7 h266 a7,7 0 0 1 7,7 v23 h-280 z" fill="#7c2d12"/>
 <text class="tname" x="730" y="70">FactUserEvent</text>
 <text class="tkind" x="990" y="70" text-anchor="end">FACT</text>
@@ -426,7 +415,7 @@
 </g>
 <g class="tbl" data-table="FactPayment">
 <rect class="shadow" x="722" y="311" width="280" height="236" rx="7"/>
-<rect class="box" x="720" y="308" width="280" height="236" rx="7" fill="#ffffff"/>
+<rect class="box" x="720" y="308" width="280" height="236" rx="7" fill="var(--surface)"/>
 <path class="hd" d="M720,315 a7,7 0 0 1 7,-7 h266 a7,7 0 0 1 7,7 v23 h-280 z" fill="#7c2d12"/>
 <text class="tname" x="730" y="328">FactPayment</text>
 <text class="tkind" x="990" y="328" text-anchor="end">FACT</text>
@@ -466,7 +455,7 @@
 </g>
 <g class="tbl" data-table="FactSubscription">
 <rect class="shadow" x="722" y="587" width="280" height="218" rx="7"/>
-<rect class="box" x="720" y="584" width="280" height="218" rx="7" fill="#ffffff"/>
+<rect class="box" x="720" y="584" width="280" height="218" rx="7" fill="var(--surface)"/>
 <path class="hd" d="M720,591 a7,7 0 0 1 7,-7 h266 a7,7 0 0 1 7,7 v23 h-280 z" fill="#7c2d12"/>
 <text class="tname" x="730" y="604">FactSubscription</text>
 <text class="tkind" x="990" y="604" text-anchor="end">FACT</text>
@@ -599,5 +588,6 @@
   });
 })();
 </script>
+<script src="site.js"></script>
 </body>
 </html>

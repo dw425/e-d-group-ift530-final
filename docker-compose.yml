@@ -1,0 +1,38 @@
+# The database server this project was built and tested against.
+#
+# The SQL Server image itself is Microsoft's and is ~2.4 GB, so it is not
+# in this repo - nothing that size belongs in git, and it is not ours to
+# redistribute. This file pins the exact image instead, which is the
+# reproducible part: `docker compose up -d` pulls the same server on any
+# machine.
+#
+#   export MSSQL_SA_PASSWORD='<a strong password>'   # never commit this
+#   docker compose up -d
+#   sqlcmd -S localhost,1433 -U sa -C -i IFT530_EDGroup_FinalProject.sql
+#
+# Apple Silicon runs the x86-64 image under Rosetta; there is no native
+# macOS or arm64 build of SQL Server.
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    container_name: ift530-sql
+    platform: linux/amd64
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD first}
+      MSSQL_PID: Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL",
+             "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa \
+              -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+volumes:
+  mssql-data:

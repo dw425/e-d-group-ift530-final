@@ -9,6 +9,7 @@ mirror parts/30_tables.sql; if that file changes, change this one.
 
 import html
 import os
+import sys
 
 BOX_W    = 280
 ROW_H    = 18
@@ -169,7 +170,8 @@ COLORS = {
     "DimAccount":   "#15803d",
 }
 
-FILL = {"dim": "#ffffff", "fact": "#ffffff", "audit": "#ffffff"}
+FILL = {"dim": "var(--surface)", "fact": "var(--surface)",
+        "audit": "var(--surface)"}
 HEAD = {"dim": "#1e3a5f", "fact": "#7c2d12", "audit": "#44403c"}
 
 
@@ -334,7 +336,14 @@ def build():
                .replace("{{FACTS}}", str(counts["facts"])) \
                .replace("{{FKS}}", str(counts["fks"])) \
                .replace("{{VOLUMES}}", volumes) \
-               .replace("{{LOADED}}", str(sum(t["rows"] for t in TABLES.values())))
+               .replace("{{LOADED}}", str(sum(t["rows"] for t in TABLES.values()))) \
+               .replace("{{HEAD}}", site_chrome.HEAD) \
+               .replace("{{TOPBAR}}", site_chrome.topbar("erd.html")) \
+               .replace("{{FOOT}}", site_chrome.FOOT)
+
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import site_chrome  # noqa: E402
 
 
 HTML = r"""<!doctype html>
@@ -343,28 +352,9 @@ HTML = r"""<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>E &amp; D Group ERD</title>
+{{HEAD}}
 <style>
-  :root {
-    --ink:#111827; --muted:#6b7280; --line:#d1d5db; --bg:#f3f4f6;
-    --card:#ffffff; --accent:#1e3a5f;
-  }
-  * { box-sizing:border-box; }
-  body {
-    margin:0; padding:28px 16px 56px; background:var(--bg); color:var(--ink);
-    font:14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  }
-  .wrap { max-width:1120px; margin:0 auto; }
   header { margin-bottom:18px; }
-  h1 { margin:0 0 4px; font-size:24px; letter-spacing:-0.01em; }
-  .sub { color:var(--muted); margin:0; }
-  .sitenav { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 18px; }
-  .sitenav a { display:inline-block; padding:7px 13px; border:1px solid var(--line);
-    border-radius:7px; background:var(--card,#fff); color:var(--ink);
-    font-size:12.5px; font-weight:500; text-decoration:none; }
-  .sitenav a:hover { border-color:var(--accent); color:var(--accent); }
-  .sitenav a.on { border-color:var(--accent); color:var(--accent);
-    box-shadow:inset 0 0 0 1px var(--accent); }
-  @media print { .sitenav { display:none; } }
   .stats { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0; padding:0; list-style:none; }
   .stats li {
     background:var(--card); border:1px solid var(--line); border-radius:999px;
@@ -377,18 +367,19 @@ HTML = r"""<!doctype html>
   }
   .hint { color:var(--muted); font-size:12px; margin:0 0 10px; }
   svg { display:block; max-width:100%; height:auto; }
-  .shadow { fill:#000; opacity:.07; }
-  .box { stroke:#cbd5e1; stroke-width:1; }
-  .zebra { fill:#f8fafc; }
+  .shadow { fill:#000; opacity:.06; }
+  .box { stroke:var(--border); stroke-width:1; }
+  .zebra { fill:var(--surface-2); }
   .tname { fill:#fff; font:600 13px ui-monospace, SFMono-Regular, Menlo, monospace; }
   .tkind { fill:#ffffff; opacity:.62; font:600 9px -apple-system, sans-serif; letter-spacing:.09em; }
-  .col  { fill:#1f2937; font:12px ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .col  { fill:var(--text); font:12px ui-monospace, SFMono-Regular, Menlo, monospace; }
   .col.pk { font-weight:700; }
-  .typ  { fill:#6b7280; font:10.5px ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .typ.null { fill:#9ca3af; font-style:italic; }
+  .typ  { fill:var(--muted); font:10.5px ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .typ.null { fill:var(--dim); font-style:italic; }
   .badge { font:700 8.5px -apple-system, sans-serif; }
-  .b-pk { fill:#b45309; } .b-fk { fill:#1d4ed8; } .b-dd { fill:#7c3aed; }
-  .rowcount { fill:#9ca3af; font:9.5px -apple-system, sans-serif; }
+  .b-pk { fill:var(--c-amber); } .b-fk { fill:var(--c-blue); }
+  .b-dd { fill:var(--c-violet); }
+  .rowcount { fill:var(--dim); font:9.5px -apple-system, sans-serif; }
   .lnk { opacity:.85; }
 
   /* hover isolation - 15 keys cross, so let one table answer at a time */
@@ -405,7 +396,7 @@ HTML = r"""<!doctype html>
     letter-spacing:.05em; text-transform:uppercase; padding:6px 10px;
     border-bottom:1px solid var(--line);
   }
-  table.fks td { padding:5px 10px; border-bottom:1px solid #f1f5f9; }
+  table.fks td { padding:5px 10px; border-bottom:1px solid var(--border-soft); }
   table.fks code { font:11.5px ui-monospace, SFMono-Regular, Menlo, monospace; }
   table.vol { border-collapse:collapse; width:100%; font-size:12.5px; }
   table.vol th {
@@ -413,21 +404,20 @@ HTML = r"""<!doctype html>
     text-transform:uppercase; letter-spacing:.04em; padding:0 10px 6px;
     border-bottom:1px solid var(--line);
   }
-  table.vol td { padding:5px 10px; border-bottom:1px solid #f1f5f9; }
+  table.vol td { padding:5px 10px; border-bottom:1px solid var(--border-soft); }
   table.vol code { font:11.5px ui-monospace, SFMono-Regular, Menlo, monospace; }
   table.vol .num { text-align:right; font-variant-numeric:tabular-nums; }
   .ok, .bad, .na {
     font-size:11px; font-weight:600; padding:1px 7px; border-radius:999px;
   }
-  .ok  { background:#dcfce7; color:#14532d; }
-  .bad { background:#fee2e2; color:#7f1d1d; }
-  .na  { background:#f1f5f9; color:#475569; font-weight:500; }
+  .ok  { background:var(--c-green-soft); color:var(--c-green); }
+  .bad { background:var(--c-rose-soft); color:var(--c-rose); }
+  .na  { background:var(--surface-2); color:var(--muted); font-weight:500; }
   .dot {
     display:inline-block; width:8px; height:8px; border-radius:50%;
     margin-right:7px; vertical-align:middle;
   }
-  h2 { font-size:15px; margin:0 0 10px; }
-  footer { color:var(--muted); font-size:11.5px; margin-top:22px; text-align:center; }
+  footer { color:var(--dim); font-size:11.5px; margin-top:22px; text-align:center; }
 
   @media print {
     @page { size:letter landscape; margin:9mm; }
@@ -451,13 +441,8 @@ HTML = r"""<!doctype html>
 </style>
 </head>
 <body>
+{{TOPBAR}}
 <div class="wrap">
-  <nav class="sitenav">
-    <a href="index.html">Project home</a>
-    <a class="on" href="erd.html">ERD</a>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="design_spec.html">Design spec</a>
-  </nav>
   <header>
     <h1>E &amp; D Group &mdash; Entity Relationship Diagram</h1>
     <p class="sub">Online game live-ops analytics &middot; star schema &middot; IFT 530 Final Project</p>
@@ -549,6 +534,7 @@ HTML = r"""<!doctype html>
   });
 })();
 </script>
+{{FOOT}}
 </body>
 </html>
 """

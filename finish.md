@@ -139,6 +139,21 @@ Arrange** and fit to view. There was no saved connection profile on this
 machine, which is why the `erd.html` route was taken. The printable
 `docs/EDGroup_ERD.pdf` is a third option.
 
+**Capture it in the light theme.** The published pages now carry a
+sun/moon switch and remember the choice, and they follow the operating
+system until you make one. A dark screenshot is unreadable once it is
+printed, so set the page to light before capturing: click the sun/moon in
+the header, or seed the choice before the window opens —
+
+```bash
+# a one-line page that sets the theme, then hands off to the ERD
+printf '%s' '<script>localStorage.setItem("edg-theme","light");\
+location.replace("erd.html");</script>' > docs/_light.html
+```
+
+Delete `docs/_light.html` afterwards; it is a capture aid, not part of
+the site.
+
 ### Confirm before moving on
 
 ```bash
