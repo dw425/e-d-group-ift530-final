@@ -1,0 +1,11 @@
+# Credentials never belong in this repo. The SA password comes from the
+# course repo's .env, which is gitignored there and copied nowhere.
+.env
+*.env
+!.env.example
+
+.DS_Store
+__pycache__/
+*.pyc
+~$*.docx
+/tmp/

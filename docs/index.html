@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E &amp; D Group — IFT 530 Final Project</title>
+<style>
+  :root {
+    --ink:#111827; --muted:#6b7280; --line:#d1d5db; --bg:#f3f4f6;
+    --card:#ffffff; --accent:#1e3a5f;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; padding:40px 16px 64px; background:var(--bg); color:var(--ink);
+    font:15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width:760px; margin:0 auto; }
+  h1 { margin:0 0 6px; font-size:26px; letter-spacing:-0.01em; }
+  .sub { color:var(--muted); margin:0 0 4px; }
+  .meta { color:var(--muted); font-size:13px; margin:0 0 26px; }
+  h2 { font-size:15px; margin:30px 0 10px; letter-spacing:.01em; }
+  ul.links { list-style:none; padding:0; margin:0; }
+  ul.links li { margin-bottom:10px; }
+  a.card {
+    display:block; background:var(--card); border:1px solid var(--line);
+    border-radius:10px; padding:13px 16px; text-decoration:none; color:inherit;
+  }
+  a.card:hover { border-color:var(--accent); }
+  a.card b { display:block; color:var(--accent); font-size:14.5px; }
+  a.card span { color:var(--muted); font-size:13px; }
+  .stats { display:flex; flex-wrap:wrap; gap:8px; padding:0; margin:0 0 8px;
+           list-style:none; }
+  .stats li { background:var(--card); border:1px solid var(--line);
+              border-radius:999px; padding:4px 12px; font-size:12.5px; }
+  p.note { color:var(--muted); font-size:13px; }
+  code { font:12.5px ui-monospace, SFMono-Regular, Menlo, monospace;
+         background:var(--card); border:1px solid var(--line);
+         border-radius:4px; padding:1px 5px; }
+  footer { color:var(--muted); font-size:12px; margin-top:34px;
+           text-align:center; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink:#e5e7eb; --muted:#9ca3af; --line:#374151; --bg:#111827;
+      --card:#1f2937; --accent:#93c5fd;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink:#e5e7eb; --muted:#9ca3af; --line:#374151; --bg:#111827;
+    --card:#1f2937; --accent:#93c5fd;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>E &amp; D Group &mdash; IFT 530 Final Project</h1>
+  <p class="sub">Player analytics for a live, free-to-play online game.</p>
+  <p class="meta">Ethan Oxley, Daniel Warren &middot; Arizona State University
+    &middot; IFT 530: Advanced Database Management Systems</p>
+
+  <ul class="stats">
+    <li>10 tables</li><li>3 views</li><li>15 foreign keys</li>
+    <li>32 check constraints</li><li>13 PASS / 0 FAIL</li>
+  </ul>
+
+  <h2>Browse</h2>
+  <ul class="links">
+    <li><a class="card" href="erd.html">
+      <b>Entity Relationship Diagram</b>
+      <span>All ten tables, every foreign key, and the row counts checked
+        against what the assignment requires. Hover a table to isolate its
+        relationships.</span></a></li>
+    <li><a class="card" href="design_spec.html">
+      <b>Design Spec</b>
+      <span>One page: grain, keys, constraints, the three views, and the
+        data window the script loads.</span></a></li>
+  </ul>
+
+  <h2>Download</h2>
+  <!-- Pages serves /docs as the site root, so these point at the
+       repository rather than up a directory. -->
+  <ul class="links">
+    <li><a class="card" href="https://github.com/dw425/e-d-group-ift530-final/raw/main/IFT530_EDGroup_FinalProject.txt">
+      <b>The SQL script</b>
+      <span>The combined deliverable &mdash; database, ten tables, the load,
+        three views, the audit trigger, a procedure, a function, a cursor and
+        thirteen tests. Re-runnable.</span></a></li>
+    <li><a class="card" href="https://github.com/dw425/e-d-group-ift530-final/raw/main/IFT530_EDGroup_FinalProjectSummary.pdf">
+      <b>Project Summary (PDF)</b>
+      <span>The 50-mark document: what the database stores, what it is
+        useful for, and a column-by-column spec of every table.</span></a></li>
+    <li><a class="card" href="EDGroup_ERD.pdf">
+      <b>ERD (PDF)</b>
+      <span>The same diagram, print-ready.</span></a></li>
+  </ul>
+
+  <h2>The database itself</h2>
+  <ul class="links">
+    <li><a class="card" href="https://github.com/dw425/e-d-group-ift530-final/raw/main/database/E_D_Group.bak">
+      <b>E_D_Group.bak</b>
+      <span>A full backup of the built and populated database, 736&nbsp;KB.
+        Restore it to SQL Server 2025 and the whole thing is there &mdash;
+        tables, data, views, procedure, function and trigger. Verified by
+        restoring it to a scratch database and counting the rows back
+        out.</span></a></li>
+    <li><a class="card" href="https://github.com/dw425/e-d-group-ift530-final/blob/main/database/DATA_DICTIONARY.md">
+      <b>Data dictionary</b>
+      <span>Every table, column, constraint and index, generated from the
+        live catalog rather than retyped from the script.</span></a></li>
+    <li><a class="card" href="https://github.com/dw425/e-d-group-ift530-final/blob/main/parts/README.md">
+      <b>The script, section by section</b>
+      <span>What each of the nine sections does, which marks it carries,
+        and why each of the three views earns its place.</span></a></li>
+  </ul>
+
+  <h2>Running it yourself</h2>
+  <p class="note">The script creates its own database and drops and rebuilds
+    every object inside it, so it can be run repeatedly without cleanup:<br>
+    <code>sqlcmd -S localhost,1433 -U sa -C -i IFT530_EDGroup_FinalProject.sql</code>
+    <br>It has been run three times in a row against SQL Server 2025, clean
+    each time, and the row counts are asserted by the script itself.</p>
+
+  <footer>E &amp; D Group &middot; IFT 530 Final Project &middot; <a href="https://github.com/dw425/e-d-group-ift530-final">source on GitHub</a></footer>
+</div>
+</body>
+</html>

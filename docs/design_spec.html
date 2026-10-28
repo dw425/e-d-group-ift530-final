@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>E &amp; D Group Design Spec</title>
+<style>
+  :root { --ink:#111827; --muted:#6b7280; --line:#d8dde5; --accent:#1e3a5f; }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; padding:0; color:var(--ink); background:#fff;
+    font:11pt/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  .page { max-width:7.1in; margin:0 auto; padding:0.2in 0; }
+  h1 { font-size:21pt; margin:0 0 2px; letter-spacing:-0.01em; }
+  .sub { color:var(--muted); margin:0 0 4px; font-size:11pt; }
+  .meta { color:var(--muted); font-size:9.5pt; margin:0 0 18px;
+          border-bottom:2px solid var(--accent); padding-bottom:12px; }
+  h2 { font-size:13pt; margin:26px 0 8px; color:var(--accent);
+       border-bottom:1px solid var(--line); padding-bottom:4px; }
+  h3 { font-size:11pt; margin:18px 0 6px; }
+  p { margin:0 0 10px; }
+  table { border-collapse:collapse; width:100%; font-size:9pt; margin:0 0 12px; }
+  th { text-align:left; background:#f1f4f8; color:var(--accent); font-weight:700;
+       font-size:8pt; letter-spacing:.04em; text-transform:uppercase;
+       padding:6px 8px; border:1px solid var(--line); }
+  td { padding:5px 8px; border:1px solid var(--line); vertical-align:top; }
+  td.num { text-align:right; white-space:nowrap; }
+  code, .mono { font:9pt ui-monospace, SFMono-Regular, Menlo, monospace; }
+  td code { font-size:8.5pt; }
+  .k { font-weight:700; }
+  pre { background:#f7f9fc; border:1px solid var(--line); border-radius:5px;
+        padding:10px 12px; font:9pt/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+        overflow:auto; margin:0 0 12px; }
+  ul { margin:0 0 12px; padding-left:20px; }
+  li { margin-bottom:4px; }
+  .tag { display:inline-block; font-size:7.5pt; font-weight:700; letter-spacing:.05em;
+         padding:1px 6px; border-radius:3px; vertical-align:middle; margin-left:6px; }
+  .t-dim { background:#dbeafe; color:#1e3a8a; }
+  .t-fact { background:#fde9d9; color:#7c2d12; }
+  .t-audit { background:#e7e5e4; color:#44403c; }
+  .note { background:#fffbeb; border-left:3px solid #d97706; padding:8px 12px;
+          font-size:9.5pt; margin:0 0 12px; }
+  footer { margin-top:28px; padding-top:10px; border-top:1px solid var(--line);
+           color:var(--muted); font-size:8.5pt; text-align:center; }
+  .avoid { page-break-inside:avoid; }
+  tr, thead { page-break-inside:avoid; }
+  thead { display:table-header-group; }
+  @page { size:letter; margin:0.7in 0.7in 0.6in; }
+  @media print { .page { padding:0; max-width:none; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>E &amp; D Group &mdash; Database Design Spec</h1>
+<p class="sub">Online game live-ops analytics</p>
+<p class="meta">IFT 530: Advanced Database Management Systems &middot; Final Project &middot;
+Ethan Oxley, Daniel Warren &middot; Arizona State University</p>
+
+<h2>Overview</h2>
+<p>Our project builds the analytics database behind an online free-to-play game &mdash; the kind
+of system a live-ops team actually runs on. We instrument every player action: sessions, levels
+played, items used, ads watched, purchases, and the location the player was in when they did it.
+Players arrive through marketing campaigns, so acquisition cost rides along on the user record and
+we can answer whether a campaign ever paid for itself. Accounts sit on a plan &mdash; free, Plus,
+Premium &mdash; which lets us compare free versus paid <em>behavior</em> rather than just free
+versus paid revenue.</p>
+
+<p>We landed on a star schema: six dimensions around three fact tables, plus one audit table.
+Geography is the piece we are most pleased with &mdash; a role-playing dimension referenced five
+times, including both a user's registered location and their last-seen location. That single
+choice gave us fraud detection almost for free.</p>
+
+<table class="avoid">
+  <tr><th>Database</th><td><code>E_D_Group</code> on SQL Server 2025 Developer Edition</td></tr>
+  <tr><th>Model</th><td>Star schema &mdash; 6 dimensions, 3 facts, 1 audit table (10 total, the assignment cap)</td></tr>
+  <tr><th>Integrity</th><td>15 foreign keys, 10 primary keys, 3 unique constraints, 32 check constraints, 7 defaults</td></tr>
+  <tr><th>Window</th><td>30 days &mdash; 2026-09-26 through 2026-10-25, spanning two calendar months</td></tr>
+  <tr><th>Volume</th><td>10 rows per dimension, 20&ndash;50 per fact table (as the assignment requires); schema designed for 100,000 users</td></tr>
+</table>
+
+<h2>Dimensions</h2>
+
+<table>
+<thead><tr><th style="width:21%">Table</th><th style="width:7%">Rows</th><th>Key columns</th><th style="width:26%">What it slices</th></tr></thead>
+<tbody>
+<tr>
+  <td><code class="k">DimGeography</code></td><td class="num">10</td>
+  <td><code>GeoID</code> <span class="mono">PK</span>, CountryCode, CountryName, Region, City,
+      <b>Latitude</b>, <b>Longitude</b>, RiskTier</td>
+  <td>Role-playing &mdash; referenced 5&times; for registered, last-seen, billing, event and payment location</td>
+</tr>
+<tr>
+  <td><code class="k">DimUser</code></td><td class="num">10</td>
+  <td><code>UserID</code> <span class="mono">PK</span>, Username, Email, SignupDate,
+      <b>RegisteredGeoID</b>, <b>LastSeenGeoID</b>, LastSeenAt, AgeBand, PreferredDevice,
+      LifecycleStage, AcqCampaignID, AcqCostUSD</td>
+  <td>The person &mdash; demographics, device, cohort, lifecycle stage, acquisition cost</td>
+</tr>
+<tr>
+  <td><code class="k">DimAccount</code></td><td class="num">10</td>
+  <td><code>AccountID</code> <span class="mono">PK</span>, UserID, AccountNumber, PlanID,
+      AccountStatus, OpenedDate, ClosedDate, IsAutoRenew, BillingGeoID</td>
+  <td>The billing entity, deliberately separate from the person</td>
+</tr>
+<tr>
+  <td><code class="k">DimPlan</code></td><td class="num">10</td>
+  <td><code>PlanID</code> <span class="mono">PK</span>, PlanName, PriceUSD, BillingPeriod,
+      <b>IsPaid</b>, TrialDays, AdsEnabled, EffectiveDate</td>
+  <td>Free vs paid tiers &mdash; this is the audited lookup table</td>
+</tr>
+<tr>
+  <td><code class="k">DimProduct</code></td><td class="num">10</td>
+  <td><code>ProductID</code> <span class="mono">PK</span>, ProductName, ProductCategory,
+      ListPriceUSD, IsActive, ReleaseDate</td>
+  <td>Store catalog, kept apart so a price change does not rewrite history</td>
+</tr>
+<tr>
+  <td><code class="k">DimCampaign</code></td><td class="num">10</td>
+  <td><code>CampaignID</code> <span class="mono">PK</span>, CampaignName, Channel, CostModel,
+      StartDate, EndDate, BudgetUSD</td>
+  <td>Marketing attribution and channel spend</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Fact tables</h2>
+
+<table class="avoid">
+<thead><tr><th style="width:21%">Table</th><th style="width:24%">Grain</th><th style="width:8%">Rows</th><th>Carries</th></tr></thead>
+<tbody>
+<tr>
+  <td><code class="k">FactUserEvent</code></td><td>One row per player action</td><td class="num">48</td>
+  <td><code>SessionID</code> <i>(degenerate dimension)</i>, EventType, EventTS, LevelNumber,
+      Outcome, DeviceType, SourceSystem</td>
+</tr>
+<tr>
+  <td><code class="k">FactPayment</code></td><td>One row per transaction</td><td class="num">30</td>
+  <td>AmountUSD, PaymentType, PaymentMethod, GeoID, IsFlagged, SourceSystem</td>
+</tr>
+<tr>
+  <td><code class="k">FactSubscription</code></td><td>One row per lifecycle change</td><td class="num">23</td>
+  <td>EventType, <b>PrevPlanID</b>, MRRDeltaUSD, TermMonths, CancelReason, SourceSystem</td>
+</tr>
+</tbody>
+</table>
+
+<p><code>DimPlanAudit</code> is the tenth table, written only by the trigger. It has
+<em>no</em> foreign key back to <code>DimPlan</code> on purpose: a DELETE audit row has to
+outlive the row it describes, and a foreign key would either block the delete or cascade the
+history away.</p>
+
+<h2>Relationships</h2>
+
+<pre>Create order (drop order is its exact reverse):
+
+  DimGeography, DimPlan, DimProduct, DimCampaign   (no outbound FKs)
+    -&gt; DimUser
+         -&gt; DimAccount
+              -&gt; FactUserEvent, FactPayment, FactSubscription
+
+  DimPlanAudit                       (standalone, written by the trigger)</pre>
+
+<p>Nothing closes a loop, so the
+script is re-runnable. Dimension keys are assigned explicitly so the populate section can reference
+them deterministically; fact keys are <code>IDENTITY</code>, because at the volume this schema is
+designed for nothing should be assigning keys by hand.</p>
+
+<h2>Programmable objects</h2>
+
+<table class="avoid">
+<thead><tr><th style="width:26%">Object</th><th style="width:13%">Type</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><code>vwDailyActiveUsers</code></td><td>View</td>
+    <td>DAU across the 30-day window, split free vs paid</td></tr>
+<tr><td><code>vwFreeVsPaidValue</code></td><td>View</td>
+    <td>Engagement and lifetime value by plan</td></tr>
+<tr><td><code>vwSuspiciousTransactions</code></td><td>View</td>
+    <td>Impossible-travel and high-risk geography &mdash; 5 of 30 payments flagged</td></tr>
+<tr><td><code>fnGeoDistanceKm</code></td><td>Scalar UDF</td>
+    <td>Haversine great-circle distance between two <code>GeoID</code>s</td></tr>
+<tr><td><code>spMonthlyActiveUsers</code></td><td>Procedure</td>
+    <td>MAU, revenue and ARPU for a month; <code>THROW 50001/50002</code> on bad parameters</td></tr>
+<tr><td><code>TR_DimPlan_Audit</code></td><td>Trigger</td>
+    <td>One <code>AFTER INSERT, UPDATE, DELETE</code> trigger covering all three operations</td></tr>
+<tr><td><code>curLevelDifficulty</code></td><td>Cursor</td>
+    <td><code>GLOBAL</code> cursor walking the levels, flags any level under a 50% win rate as a churn risk</td></tr>
+</tbody>
+</table>
+
+<h2>Design rules we held to</h2>
+
+<ul>
+<li><b>Every coded column is constrained.</b> 32 check constraints &mdash; no free-text status,
+    channel, device or event-type columns anywhere.</li>
+<li><b>Indexes are for the target volume, not the sample.</b> Six non-key indexes on the two
+    timestamp columns and the hot join columns. At 10 users the optimizer ignores them and scans
+    every time; they exist because the schema is designed for 100,000.</li>
+<li><b>Descriptive data lives in dimensions.</b> The fact tables carry integer keys, one timestamp
+    and short coded columns; everything readable is reached by a join.</li>
+<li><b>Prices are snapshotted, not referenced.</b> <code>FactPayment.AmountUSD</code> is what was
+    actually charged, so a later catalog price change cannot rewrite revenue history.</li>
+<li><b>Re-runnable.</b> Drops child-first, rebuilds parent-first; verified over three consecutive
+    runs, 13 PASS / 0 FAIL each time.</li>
+</ul>
+
+<div class="note">
+<b>Making ten rows say something.</b> Ten players over a short window will not demonstrate a
+reporting database by accident, so the data is laid out deliberately rather than drawn at random.
+The window crosses a month boundary so the monthly procedure returns two rows. Twelve sessions sit
+on nine days, three of them carrying more than one player, so daily active users moves between one
+and three instead of being flat. Nine accounts are open across both a free and a paid plan. Level
+five is lost three times in four. Three payments land in countries the account holder was nowhere
+near minutes earlier. Each of those is something a view, the procedure or the cursor depends on,
+and the generator asserts every one before writing a single <code>INSERT</code>.
+</div>
+
+<footer>E &amp; D Group &middot; IFT 530 Final Project &middot; Ethan Oxley, Daniel Warren</footer>
+
+</div>
+</body>
+</html>
