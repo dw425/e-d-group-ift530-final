@@ -21,7 +21,8 @@ cp "$HERE"/IFT530_EDGroup_FinalProject.sql \
    "$HERE"/IFT530_EDGroup_FinalProject.txt \
    "$HERE"/IFT530_EDGroup_FinalProjectSummary.docx \
    "$HERE"/IFT530_EDGroup_FinalProjectSummary.pdf \
-   "$HERE"/build.py "$HERE"/build_summary.py "$HERE"/README.md "$MIRROR/"
+   "$HERE"/build.py "$HERE"/build_summary.py "$HERE"/README.md \
+   "$HERE"/finish.md "$MIRROR/"
 cp "$HERE"/parts/*.sql "$MIRROR/parts/"
 cp "$HERE"/tools/*.py "$HERE"/tools/*.sh "$MIRROR/tools/"
 # vendored so the mirror can build on its own; it lives in the course

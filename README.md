@@ -3,6 +3,10 @@
 **Group:** E & D Group &nbsp;·&nbsp; **Members:** Ethan Oxley, Daniel Warren
 &nbsp;·&nbsp; **Database:** `E_D_Group`
 
+> **Finishing the project?** [`finish.md`](finish.md) is the runbook —
+> every remaining step with the exact command for each, driven by
+> `./tools/finish.sh`.
+
 Two separately graded deliverables:
 
 | Deliverable | Marks | Status |
@@ -22,6 +26,8 @@ Two separately graded deliverables:
 | `tools/gendata.py` | Seeded data generator → `parts/40_populate.sql`. Not submitted. |
 | `tools/assemble.py` | Joins `parts/` into the `.sql` and `.txt`. |
 | `tools/figs.sh` | Produces one figure's worth of output. |
+| `finish.md` | The runbook for everything still outstanding. |
+| `tools/finish.sh` | Drives it: `check`, `shots`, `build`, `publish`, `all`. |
 | `tools/sync_repo.sh` | Copies the deliverables into the public repo and pushes. |
 | `docs/SCREENSHOTS.md` | The twelve-figure capture checklist. |
 | `docs/erd.html` | Self-contained interactive ERD. |
