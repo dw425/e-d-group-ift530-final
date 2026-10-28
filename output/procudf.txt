@@ -1,0 +1,30 @@
+$ sed -n '1,10p' IFT530_EDGroup_FinalProject.sql
+/*
+** Author: Ethan Oxley, Daniel Warren
+** Group: E & D Group
+** Course: IFT 530: Advanced Database Management Systems
+** SQL Server Version: Microsoft SQL Server 2025 (Developer Edition)
+** OS: macOS 26.5.1 (SQL Server running in Microsoft's official Linux
+**     container under Docker)
+** Date: 10/27/2026
+** Assignment: Final Project
+*/
+
+$ EXEC dbo.spMonthlyActiveUsers @Year = 2026
+ActivityYear  ActivityMonth  MAU  NewUsers  ReturningUsers  NetRevenueUSD  ArpuUSD
+------------  -------------  ---  --------  --------------  -------------  -------
+2026          9              2    0         2               119.96         59.98
+2026          10             8    2         6               491.78         61.47
+Warning: Null value is eliminated by an aggregate or other SET operation.
+
+$ SELECT dbo.fnGeoDistanceKm(...)   -- the UDF the fraud view calls
+Pair                Km
+----                --
+Phoenix to Seattle  1793.58
+Phoenix to London   8481.06
+Phoenix to Lagos    11906.34
+Phoenix to Mumbai   14151.05
+
+$ EXEC dbo.spMonthlyActiveUsers @Year = 1850   -- rejects bad input
+Msg 50001, Level 16, State 1, Server 994581a8454b, Procedure dbo.spMonthlyActiveUsers, Line 10
+Year must be between 2020 and 2100.

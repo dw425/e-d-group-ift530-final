@@ -1,0 +1,25 @@
+$ sed -n '1,10p' IFT530_EDGroup_FinalProject.sql
+/*
+** Author: Ethan Oxley, Daniel Warren
+** Group: E & D Group
+** Course: IFT 530: Advanced Database Management Systems
+** SQL Server Version: Microsoft SQL Server 2025 (Developer Edition)
+** OS: macOS 26.5.1 (SQL Server running in Microsoft's official Linux
+**     container under Docker)
+** Date: 10/27/2026
+** Assignment: Final Project
+*/
+
+$ SELECT * FROM dbo.vwDailyActiveUsers ORDER BY ActivityDate
+ActivityDate  DAU  PaidDAU  FreeDAU  Rolling30DayMAU  StickinessPct
+------------  ---  -------  -------  ---------------  -------------
+2026-09-27    1    1        0        1                100.00
+2026-09-29    1    1        0        2                50.00
+2026-10-02    1    0        1        3                33.33
+2026-10-05    2    1        1        4                50.00
+2026-10-09    1    1        0        5                20.00
+2026-10-12    3    2        1        7                42.86
+2026-10-17    1    0        1        8                12.50
+2026-10-20    1    1        0        8                12.50
+2026-10-23    1    1        0        9                11.11
+Warning: Null value is eliminated by an aggregate or other SET operation.

@@ -1,0 +1,25 @@
+$ sed -n '1,10p' IFT530_EDGroup_FinalProject.sql
+/*
+** Author: Ethan Oxley, Daniel Warren
+** Group: E & D Group
+** Course: IFT 530: Advanced Database Management Systems
+** SQL Server Version: Microsoft SQL Server 2025 (Developer Edition)
+** OS: macOS 26.5.1 (SQL Server running in Microsoft's official Linux
+**     container under Docker)
+** Date: 10/27/2026
+** Assignment: Final Project
+*/
+
+$ for i in 1 2 3; do sqlcmd ... -i IFT530_EDGroup_FinalProject.sql; done
+  run 1: exit 0, 0 errors, 13 PASS, 0 FAIL
+  run 2: exit 0, 0 errors, 13 PASS, 0 FAIL
+  run 3: exit 0, 0 errors, 13 PASS, 0 FAIL
+
+$ objects after three runs
+Object      N
+------      -
+tables      10
+views       3
+procedures  1
+functions   1
+triggers    1

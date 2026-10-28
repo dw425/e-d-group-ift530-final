@@ -1,0 +1,20 @@
+$ sed -n '1,10p' IFT530_EDGroup_FinalProject.sql
+/*
+** Author: Ethan Oxley, Daniel Warren
+** Group: E & D Group
+** Course: IFT 530: Advanced Database Management Systems
+** SQL Server Version: Microsoft SQL Server 2025 (Developer Edition)
+** OS: macOS 26.5.1 (SQL Server running in Microsoft's official Linux
+**     container under Docker)
+** Date: 10/27/2026
+** Assignment: Final Project
+*/
+
+$ SELECT * FROM dbo.vwSuspiciousTransactions ORDER BY PaymentTS
+PaymentID  Username   PaymentTS                    AmountUSD  RegCty  PayCty  Risk  SeenCty  Mins  Km        Reason
+---------  --------   ---------                    ---------  ------  ------  ----  -------  ----  --        ------
+3          player003  2026-09-29 18:24:00.0000000  89.99      CA      RU      High  CA       55    7484.26   Impossible travel
+11         player009  2026-10-09 15:49:00.0000000  99.99      NG      NG      High  NG       NULL  0.00      High risk location
+21         player008  2026-10-17 21:52:00.0000000  119.99     PH      NG      High  PH       70    12747.05  Impossible travel
+25         player001  2026-10-20 23:17:00.0000000  149.99     US      NG      High  US       40    11906.34  Impossible travel
+29         player009  2026-10-23 12:39:00.0000000  9.99       NG      NG      High  NG       227   0.00      High risk location

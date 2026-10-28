@@ -1,0 +1,25 @@
+$ sed -n '1,10p' IFT530_EDGroup_FinalProject.sql
+/*
+** Author: Ethan Oxley, Daniel Warren
+** Group: E & D Group
+** Course: IFT 530: Advanced Database Management Systems
+** SQL Server Version: Microsoft SQL Server 2025 (Developer Edition)
+** OS: macOS 26.5.1 (SQL Server running in Microsoft's official Linux
+**     container under Docker)
+** Date: 10/27/2026
+** Assignment: Final Project
+*/
+
+$ row counts after section 4
+TableName         Rows
+---------         ----
+DimGeography      10
+DimPlan           10
+DimProduct        10
+DimCampaign       10
+DimUser           10
+DimAccount        10
+FactUserEvent     48
+FactPayment       30
+FactSubscription  23
+DimPlanAudit      3

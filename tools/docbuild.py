@@ -37,7 +37,24 @@ from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
 
 REPO = Path(__file__).resolve().parent.parent
-DEFAULT_TEMPLATE = REPO / "templates" / "apa7_template.docx"
+
+
+def _find_template():
+    """templates/apa7_template.docx, wherever it is above this file.
+
+    In a standalone checkout it sits next to tools/. When the project is
+    checked out inside the course repo it is several levels up, at the
+    course repo root, and the old fixed path pointed at a directory that
+    does not exist there.
+    """
+    for base in [REPO, *REPO.parents]:
+        cand = base / "templates" / "apa7_template.docx"
+        if cand.is_file():
+            return cand
+    return REPO / "templates" / "apa7_template.docx"
+
+
+DEFAULT_TEMPLATE = _find_template()
 
 BODY_FONT = "Times New Roman"
 CODE_FONT = "Courier New"

@@ -1,0 +1,18 @@
+$ sed -n '1,10p' IFT530_EDGroup_FinalProject.sql
+/*
+** Author: Ethan Oxley, Daniel Warren
+** Group: E & D Group
+** Course: IFT 530: Advanced Database Management Systems
+** SQL Server Version: Microsoft SQL Server 2025 (Developer Edition)
+** OS: macOS 26.5.1 (SQL Server running in Microsoft's official Linux
+**     container under Docker)
+** Date: 10/27/2026
+** Assignment: Final Project
+*/
+
+$ SELECT * FROM dbo.DimPlanAudit  (after the section 7 test)
+AuditID  PlanID  ChangeType  OldPlanName      NewPlanName      OldPriceUSD  NewPriceUSD  OldIsPaid  NewIsPaid  ChangedAt
+-------  ------  ----------  -----------      -----------      -----------  -----------  ---------  ---------  ---------
+1        99      INSERT      NULL             Audit Test Plan  NULL         7.99         NULL       1          2026-10-28 01:01:57.9529422
+2        99      UPDATE      Audit Test Plan  Audit Test Plan  7.99         9.99         1          1          2026-10-28 01:01:57.9589769
+3        99      DELETE      Audit Test Plan  NULL             9.99         NULL         1          NULL       2026-10-28 01:01:57.9707193

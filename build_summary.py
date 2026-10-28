@@ -426,7 +426,7 @@ def main():
              "The location on FactPayment against where the player was last "
              "seen and how long ago, in vwSuspiciousTransactions. "
              "fnGeoDistanceKm turns the two sets of coordinates on "
-             "DimGeography into kilometres, so an impossible trip is "
+             "DimGeography into kilometers, so an impossible trip is "
              "something we measure instead of guess at."),
             ("What is recurring revenue doing?",
              "MRRDeltaUSD on FactSubscription, with PrevPlanID telling an "

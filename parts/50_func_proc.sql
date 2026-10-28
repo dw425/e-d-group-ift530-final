@@ -3,7 +3,7 @@
 ** Group: E & D Group
 ** Course: IFT 530: Advanced Database Management Systems
 ** SQL Server Version: Microsoft SQL Server 2025 (Developer Edition)
-** OS: macOS 26.6.2 (SQL Server running in Microsoft's official Linux
+** OS: macOS 26.5.1 (SQL Server running in Microsoft's official Linux
 **     container under Docker)
 ** Date: 10/27/2026
 ** Assignment: Final Project
@@ -24,7 +24,7 @@
    This is the haversine formula. It exists because "the payment came
    from a different country" is a weak signal on its own - plenty of
    people travel - while "the payment came from 11,000 km away, forty
-   minutes after they were last seen" is not something a traveller can
+   minutes after they were last seen" is not something a traveler can
    do. Section 6 divides this by the elapsed time to get an implied
    speed, and that is what separates a holiday from a stolen card.
 

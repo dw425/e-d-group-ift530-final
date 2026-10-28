@@ -2,10 +2,11 @@
 
 Everything left to do, in order, with the exact command for each step.
 
-Only one thing here cannot be automated: the twelve screen captures, which
-are pictures of your display. Everything on either side of them is wrapped
-in `tools/finish.sh`, so the whole sequence is **check → capture → check →
-build → publish → submit**.
+**Status: everything below is done except the Canvas submission in step 5.**
+Eleven of the twelve captures turned out to be scriptable after all, and
+`tools/capture.sh` takes them unattended; the ERD is the only one somebody
+has to compose. The whole sequence is **check → capture → check → build →
+proof → publish → submit**.
 
 **Where you are right now**
 
@@ -17,9 +18,9 @@ build → publish → submit**.
 | ✅ | Interactive ERD + design spec, published | done |
 | ✅ | Database built, backed up, data dictionary generated | done |
 | ✅ | Public repo, GitHub Pages | done |
-| ⬜ | **Twelve screenshots** | **outstanding — yours to capture** |
-| ⬜ | Final Project Word document (ERD, 5 marks + snapshots) | blocked on the screenshots |
-| ⬜ | Submit to Canvas | last step |
+| ✅ | Twelve screenshots | done, `tools/capture.sh` + the ERD |
+| ✅ | Final Project Word document (ERD, 5 marks + snapshots) | done, 24 pages, proofed page by page |
+| ⬜ | **Submit to Canvas** | **the last step, and the only one left** |
 
 ---
 
@@ -29,10 +30,10 @@ Run these four lines every time you start a session. Nothing else works
 without them.
 
 ```bash
-cd ~/Documents/IFT_Course
+cd ~/Documents/School/IFT_Course
 source .env
 ./tools/mssql.sh start
-cd courses/IFT530/FinalProject
+cd courses/IFT530/Final_Project
 ```
 
 Then see exactly what is missing:
@@ -47,6 +48,25 @@ command that produces each missing figure, so you never have to guess.
 ---
 
 ## Step 1 — Capture the twelve screenshots
+
+Eleven of them are a terminal running `tools/figs.sh`, and those are taken
+unattended:
+
+```bash
+./tools/finish.sh capture
+```
+
+That opens its own VS Code window, clears the notification toasts and any
+terminal left over from a previous session, runs each target, captures the
+whole display, refuses to finish if two captures came out byte-identical,
+closes the window it opened, and then crops the empty black off the bottom
+of each one into `screenshots/`. `screenshots_full/` keeps the untouched
+originals. Leave the machine alone while it runs — it is driving the
+keyboard.
+
+Only figure 3, the ERD, is left after that; it is covered below.
+
+If you would rather do it by hand:
 
 ```bash
 ./tools/finish.sh shots
@@ -87,25 +107,37 @@ frame.
 
 ### Figure 3, the ERD — the one that is not a terminal capture
 
-This is the 5-mark requirement, so it is worth getting right.
-
-1. In VS Code, connect with **no database pinned** in the connection
-   profile. The command only appears on a Database node; a pinned
-   connection opens on a table node instead.
-2. Expand the server, right-click **E_D_Group**, choose
-   **Visualize and Design Schema…**. It is not in the command palette.
-3. Dismiss any Copilot popup, click **Auto Arrange**, fit to view.
-4. Capture the full display, save as `screenshots/fig3_erd.png`.
-
-**If the extension will not cooperate**, use the fallback — it is complete
-and shows every table and every relationship:
+This is the 5-mark requirement, so it is worth getting right. **What was
+submitted** is a full-display capture of `docs/erd.html`:
 
 ```bash
-open docs/erd.html
+(cd docs && /usr/local/bin/python3 -m http.server 8731 --bind 127.0.0.1 &)
+open -na "Google Chrome" --args --user-data-dir=/tmp/erdshot \
+     --no-first-run --window-position=0,39 --window-size=2056,1290 \
+     http://127.0.0.1:8731/erd.html
+# capture the whole display, save as screenshots/fig3_erd.png
 ```
 
-Or the printable version: `docs/EDGroup_ERD.pdf`. Either is a legitimate
-ERD for this requirement.
+Two things in there are deliberate. Serving it over `127.0.0.1` avoids a
+`file://` URL, which makes Chrome raise a Documents-folder permission
+prompt that lands in the middle of the picture. The throwaway
+`--user-data-dir` gives a clean window, so no bookmarks bar or personal
+tab ends up in a graded document.
+
+`docs/erd.html` is drawn by `tools/erd_html.py` from the schema in
+`parts/30_tables.sql` rather than read out of the server, so **check it
+against the live catalog before you capture it** — every table, column,
+type, nullability and foreign key against `sys.tables`, `sys.columns` and
+`sys.foreign_keys`. All ten tables and all fifteen foreign keys agreed when
+this was built. The document says so, so it has to stay true.
+
+**The other legitimate source** is the VS Code MSSQL extension's schema
+designer: connect with **no database pinned** (the command only appears on
+a Database node), expand the server, right-click **E_D_Group**, choose
+**Visualize and Design Schema…**, dismiss any Copilot popup, click **Auto
+Arrange** and fit to view. There was no saved connection profile on this
+machine, which is why the `erd.html` route was taken. The printable
+`docs/EDGroup_ERD.pdf` is a third option.
 
 ### Confirm before moving on
 
@@ -160,6 +192,11 @@ Pushes the new document and the screenshots as **Dan Warren
 &lt;danwarren425@gmail.com&gt;**. No other identity ever appears in this
 history.
 
+If this directory is itself a clone of the public repo — which is how it is
+checked out now — `sync_repo.sh` notices and commits in place instead of
+mirroring. Keep `courses/IFT530/Final_Project` out of the course repo's
+index while that is true; a repo inside a repo only half works.
+
 - Repo — <https://github.com/dw425/e-d-group-ift530-final>
 - Site — <https://dw425.github.io/e-d-group-ift530-final/>
 
@@ -204,15 +241,12 @@ before the group rename. Nothing points at it.
 sqlcmd -S localhost,1433 -U sa -C -Q "DROP DATABASE DWarrenGroup;"
 ```
 
-**Commit the project to your course repo.** `courses/IFT530/FinalProject/`
-is currently untracked, so this work only exists on your desktop and in the
-public repo.
-
-```bash
-cd ~/Documents/IFT_Course
-git add courses/IFT530/FinalProject
-git commit -m "IFT 530 Final Project: schema, script, summary and ERD"
-```
+**Do not add this folder to the course repo while it is a clone.**
+`courses/IFT530/Final_Project` holds its own `.git`, so `git add` from the
+course repo would record a gitlink nothing can clone. The work lives in the
+public repo, which is the point of it. If you want it inside the course
+repo instead, delete the nested `.git` first, or add the path to the course
+repo's `.gitignore` and leave it where it is.
 
 **The two old GitHub repos** — `dwarrengroup-erd` and `e-d-group-ift530` —
 are archived, read-only, and carry a banner saying so. If you would rather

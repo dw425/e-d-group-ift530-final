@@ -16,6 +16,18 @@ output. That is deliberate: the assignment asks for the header to be
 visible in the snapshot, and this puts the file and its result in one
 frame.
 
+**`tools/capture.sh` does all eleven of those unattended**, which is the
+fast path and the one that was actually used:
+
+    source .env && ./tools/capture.sh
+    /usr/local/bin/python3 tools/crop.py
+
+It opens its own VS Code window, clears notification toasts and any
+terminal left over from a previous session, runs each target, captures the
+whole display, refuses to finish if two captures came out byte-identical,
+and closes the window it opened. The rest of this file is the manual
+route, which is still correct if anything about the display changes.
+
 **Capture the whole display, not the window.** The grader is looking for
 evidence the script ran on a real server, and a cropped terminal does not
 show that. `Shift-Cmd-3` writes a full-display PNG to the Desktop.
@@ -44,8 +56,22 @@ Save each one into `screenshots/` under exactly the filename above.
 
 ## Figure 3, the ERD
 
-This one is not a terminal capture. It comes from the VS Code MSSQL
-extension's schema designer:
+This one is not a terminal capture. **What was actually submitted** is a
+full-display capture of `docs/erd.html`, served over `127.0.0.1` with
+`python3 -m http.server` and opened in a throwaway Chrome profile, so no
+bookmarks bar or personal tab lands in a graded document. A `file://` URL
+is worse than it sounds here: Chrome asks for Documents-folder access,
+which is a system permission prompt sitting in the middle of the picture.
+
+`docs/erd.html` is drawn by `tools/erd_html.py` from the schema in
+`parts/30_tables.sql`, not read out of the server, so it was checked
+against the live catalog before it was captured — every table, column,
+type, nullability and foreign key compared against `sys.tables`,
+`sys.columns` and `sys.foreign_keys`. All ten tables and all fifteen
+foreign keys agree. Do that check again if the schema changes.
+
+The other legitimate source is the VS Code MSSQL extension's schema
+designer:
 
 1. Connect with **no database pinned** in the connection profile. The
    command only appears on a Database node, and a pinned connection opens
@@ -55,9 +81,8 @@ extension's schema designer:
 3. Dismiss any Copilot popup, click **Auto Arrange**, then fit to view.
 4. Capture the full display and save as `screenshots/fig3_erd.png`.
 
-If the extension will not cooperate, `docs/erd.html` is a complete,
-self-contained ERD that prints cleanly — open it, capture it, and the
-figure still shows every table and every relationship.
+It needs a connection profile with no database pinned, and there was none
+saved on this machine, which is why the `erd.html` route was taken.
 
 ## After all twelve exist
 

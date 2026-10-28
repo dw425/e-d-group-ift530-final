@@ -1,0 +1,25 @@
+$ sed -n '1,10p' IFT530_EDGroup_FinalProject.sql
+/*
+** Author: Ethan Oxley, Daniel Warren
+** Group: E & D Group
+** Course: IFT 530: Advanced Database Management Systems
+** SQL Server Version: Microsoft SQL Server 2025 (Developer Edition)
+** OS: macOS 26.5.1 (SQL Server running in Microsoft's official Linux
+**     container under Docker)
+** Date: 10/27/2026
+** Assignment: Final Project
+*/
+
+$ sqlcmd ... -i IFT530_EDGroup_FinalProject.sql   (sections 1-3)
+TableName         Cols  FKs  Checks
+---------         ----  ---  ------
+DimAccount        9     3    2
+DimCampaign       7     0    4
+DimGeography      8     0    4
+DimPlan           8     0    3
+DimPlanAudit      11    0    1
+DimProduct        6     0    2
+DimUser           12    3    4
+FactPayment       11    4    4
+FactSubscription  10    3    3
+FactUserEvent     10    2    5

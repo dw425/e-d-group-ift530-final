@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 # Drive everything that is left on the final project.
 #
-# Only one step cannot be automated - the twelve screen captures, which
-# are pictures of your display. Everything on either side of them is
-# here, so the sequence is: check, take the missing pictures, check
-# again, build, publish.
+# Eleven of the twelve captures are a terminal running tools/figs.sh and
+# are taken unattended by tools/capture.sh. Only the ERD is a picture
+# somebody has to compose, so the sequence is: check, capture, fetch the
+# ERD, check again, build, publish.
 #
 #   ./tools/finish.sh check     what is missing right now
-#   ./tools/finish.sh shots     print the capture command for each gap
+#   ./tools/finish.sh capture   take the eleven terminal figures and crop
+#   ./tools/finish.sh shots     print the manual capture command for each gap
 #   ./tools/finish.sh build     build the Word doc and proof the PDF
 #   ./tools/finish.sh publish   mirror to the public repo and push
 #   ./tools/finish.sh all       check -> build -> publish
@@ -75,7 +76,7 @@ check() {
     if [ -f "$SHOTS/$file" ]; then
       green "$(printf '%-2s %s' "$num" "$file")"
     elif [ "$target" = ERD ]; then
-      red "$(printf '%-2s %s  <- VS Code schema designer, or docs/erd.html' "$num" "$file")"
+      red "$(printf '%-2s %s  <- capture docs/erd.html; see docs/SCREENSHOTS.md' "$num" "$file")"
     else
       red "$(printf '%-2s %s  <- ./tools/figs.sh %s' "$num" "$file" "$target")"
     fi
@@ -115,14 +116,21 @@ shots() {
     [ -f "$SHOTS/$file" ] && continue
     if [ "$target" = ERD ]; then
       printf 'Figure %-2s  %s\n' "$num" "$file"
-      printf '           right-click E_D_Group in VS Code ->\n'
-      printf '           "Visualize and Design Schema..." -> Auto Arrange\n'
-      printf '           fallback: open %s/docs/erd.html\n\n' "$HERE"
+      printf '           serve and capture docs/erd.html - the recipe, and the\n'
+      printf '           catalog check that has to go with it, are in\n'
+      printf '           %s/docs/SCREENSHOTS.md\n\n' "$HERE"
     else
       printf 'Figure %-2s  %s\n' "$num" "$file"
       printf '           ./tools/figs.sh %s\n\n' "$target"
     fi
   done
+}
+
+# The eleven terminal figures, unattended, then the crop into screenshots/.
+capture() {
+  "$HERE/tools/capture.sh"
+  echo
+  "$PY" "$HERE/tools/crop.py"
 }
 
 build() {
@@ -159,9 +167,10 @@ publish() {
 
 case "${1:-check}" in
   check)   check ;;
+  capture) capture ;;
   shots)   shots ;;
   build)   build ;;
   publish) publish ;;
   all)     check; echo; build; echo; publish ;;
-  *)       sed -n '2,13p' "$0"; exit 1 ;;
+  *)       sed -n '2,14p' "$0"; exit 1 ;;
 esac

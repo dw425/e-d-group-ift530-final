@@ -12,7 +12,7 @@ Two separately graded deliverables:
 | Deliverable | Marks | Status |
 |---|---|---|
 | Final Project Summary — description + table specs | 50 | **done** |
-| Final Project — SQL script | 150 | **script done and verified**; screenshots + ERD outstanding |
+| Final Project — SQL script | 150 | **done** — script, twelve figures and the Word document |
 
 ## Files
 
@@ -26,6 +26,10 @@ Two separately graded deliverables:
 | `tools/gendata.py` | Seeded data generator → `parts/40_populate.sql`. Not submitted. |
 | `tools/assemble.py` | Joins `parts/` into the `.sql` and `.txt`. |
 | `tools/figs.sh` | Produces one figure's worth of output. |
+| `tools/capture.sh` | Takes the eleven terminal figures from VS Code, unattended. |
+| `tools/crop.py` | Trims the empty terminal space off the bottom of those captures. |
+| `tools/erd_html.py` | Draws `docs/erd.html`, which figure 3 is a capture of. |
+| `templates/` | `apa7_template.docx`, vendored so the document builds from a bare checkout. |
 | `finish.md` | The runbook for everything still outstanding. |
 | `tools/finish.sh` | Drives it: `check`, `shots`, `build`, `publish`, `all`. |
 | `tools/sync_repo.sh` | Copies the deliverables into the public repo and pushes. |
@@ -135,10 +139,27 @@ Everything here except secrets is mirrored to a public repo for the group:
 
     ./tools/sync_repo.sh        # copy, commit and push
 
-## Still to do
+## The twelve figures
 
-**Twelve screenshots, then `build.py`.** That is the only thing between
-this and a finished submission. The full checklist — what each figure has to
-show, and how to get the ERD out of the VS Code extension — is in
-`docs/SCREENSHOTS.md`. `build.py` reads `screenshots/fig1_env.png` through
-`fig12_rerun.png` by exact name and will not build until all twelve exist.
+Eleven of them are a terminal running `tools/figs.sh`, and `tools/capture.sh`
+takes all eleven unattended: it opens its own VS Code window, clears the
+notification toasts and any terminal left over from a previous session, runs
+each target, captures the whole display, checks no two captures came out
+byte-identical, and closes the window it opened. `tools/crop.py` then trims the
+empty black below the last line of output into `screenshots/`;
+`screenshots_full/` keeps the untouched full-display originals.
+
+**Figure 3 is the ERD**, and it is the one that is not a terminal. It is a
+capture of `docs/erd.html`, served over `127.0.0.1` and opened in a throwaway
+Chrome profile so no bookmarks bar or personal tab ends up in a submitted
+document. `docs/erd.html` is drawn by `tools/erd_html.py` from the schema in
+`parts/30_tables.sql` rather than read out of the server, so before it was
+captured every table, column, type, nullability and foreign key in it was
+compared against `sys.tables`, `sys.columns` and `sys.foreign_keys` on the
+live database. All ten tables and all fifteen foreign keys agree. The VS Code
+MSSQL extension's schema designer is the other legitimate source for this
+figure; it needs a connection profile with no database pinned, and it was not
+used here.
+
+`build.py` reads `screenshots/fig1_env.png` through `fig12_rerun.png` by exact
+name and will not build until all twelve exist.

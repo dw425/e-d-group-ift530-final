@@ -49,7 +49,7 @@ def main():
         "Final Project: Player Analytics for an Online Game",
         course="IFT 530: Advanced Database Management Systems",
         instructor="Ashish Gulati",
-        date="October 26, 2026",
+        date="October 27, 2026",
         author=f"Group: {GROUP_NAME}   |   Group Members: {GROUP_MEMBERS}",
     )
 
@@ -90,9 +90,10 @@ def main():
         "only and Microsoft retired Azure Data Studio in February 2026, so the "
         "work was done with sqlcmd and the VS Code MSSQL extension, which is the "
         "same codebase Azure Data Studio was built from. The entity relationship "
-        "diagram comes from that extension's schema designer, which reads the "
-        "live catalog views, so the relationships it draws are the real foreign "
-        "key constraints rather than something drawn by hand.")
+        "diagram is drawn by tools/erd_html.py from the schema the script "
+        "creates, and it is checked back against the live catalog views before "
+        "it goes in, so the relationships it shows are the real foreign key "
+        "constraints rather than something drawn by hand.")
     p.figure(SHOT + "fig1_env.png",
              "The environment the script was run against: the SQL Server 2025 "
              "container running under Docker, and the server version it "
@@ -148,7 +149,7 @@ def main():
     p.body(
         "The primary keys give a clustered index each and the foreign keys give "
         "none, so these six cover the columns the later sections actually filter "
-        "and join on. At ten users the optimiser will ignore them and scan the "
+        "and join on. At ten users the optimizer will ignore them and scan the "
         "table every time; they are here because the schema is designed for "
         "a hundred thousand, where the two timestamp columns are what every "
         "time-series query ranges over.")
@@ -163,8 +164,11 @@ def main():
     # ---------------------------------------------------------- 2. ERD
     p.h1("Requirement 2: Entity Relationship Diagram (5 marks)")
     p.body(
-        "The diagram below was generated from the live database by the VS Code "
-        "MSSQL extension's schema designer, so every line in it is a foreign key "
+        "The diagram below is rendered by tools/erd_html.py from the schema in "
+        "section 3 of the script, and every table, column, type, nullability "
+        "and key in it was compared against sys.tables, sys.columns and "
+        "sys.foreign_keys on the live database before it was captured. All ten "
+        "tables and all fifteen foreign keys agree, so every line in it is a "
         "constraint the server actually holds, not one drawn by hand.")
     p.body(
         "The shape to look for is the two hubs. DimGeography is the first: the "
@@ -177,9 +181,9 @@ def main():
         "dimensions into the facts, and nothing flows back, which is how the "
         "diagram shows there are no circular references.")
     p.figure(SHOT + "fig3_erd.png",
-             "Entity relationship diagram generated from the live E_D_Group "
-             "database, showing all ten tables and the fifteen foreign key "
-             "relationships between them.")
+             "Entity relationship diagram for the E_D_Group database, checked "
+             "against the live catalog, showing all ten tables and the fifteen "
+             "foreign key relationships between them.")
 
     # ------------------------------------------------------ 3. populate
     p.h1("Requirement 3: Populate the Tables (20 marks)")
@@ -349,11 +353,11 @@ def main():
     p.h1("Requirement 6: Stored Procedure and Function (20 marks)")
     p.h2("fnGeoDistanceKm")
     p.body(
-        "A scalar function returning the great-circle distance in kilometres "
+        "A scalar function returning the great-circle distance in kilometers "
         "between two places, using the haversine formula. It exists because \"the "
         "payment came from a different country\" is a weak signal on its own — "
         "plenty of people travel — while \"the payment came from 11,000 km away, "
-        "forty minutes after they were last seen\" is not something a traveller "
+        "forty minutes after they were last seen\" is not something a traveler "
         "can do. View 3 divides this by the elapsed time to get an implied speed, "
         "and that is what separates a holiday from a stolen card. It returns NULL "
         "rather than zero when either location is unknown, because a user who has "
@@ -434,18 +438,19 @@ def main():
         "Re-runnability is the requirement most likely to fail silently, so it "
         "was tested the only way that means anything, by running the file three "
         "times in a row and checking what was left behind. Every run completes "
-        "with no errors and twelve passes, and the object counts afterwards are "
+        "with no errors and thirteen passes, and the object counts afterwards are "
         "the same ten tables, three views, one procedure, one function and one "
         "trigger the first run created.")
     p.figure(SHOT + "fig12_rerun.png",
              "Three consecutive runs of the submitted script, each completing "
-             "with no errors and twelve passes, and the object counts read back "
+             "with no errors and thirteen passes, and the object counts read back "
              "out of the catalog afterwards.")
 
     p.h1("Documentation Standards")
     p.body(
         "The required header block is at the top of the submitted file "
-        "and is visible in every screenshot in this document, which is what the "
+        "and is visible in all eleven terminal screenshots in this document, "
+        "which is what the "
         "announcement asks for. Below it, a file banner states what the script "
         "does, lists the sections in the order they run, and explains the "
         "mechanism that makes it re-runnable.")

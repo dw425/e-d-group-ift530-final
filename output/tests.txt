@@ -1,0 +1,33 @@
+$ sed -n '1,10p' IFT530_EDGroup_FinalProject.sql
+/*
+** Author: Ethan Oxley, Daniel Warren
+** Group: E & D Group
+** Course: IFT 530: Advanced Database Management Systems
+** SQL Server Version: Microsoft SQL Server 2025 (Developer Edition)
+** OS: macOS 26.5.1 (SQL Server running in Microsoft's official Linux
+**     container under Docker)
+** Date: 10/27/2026
+** Assignment: Final Project
+*/
+
+$ sqlcmd ... -i IFT530_EDGroup_FinalProject.sql   (section 9)
+== Test results
+Seq         Test                                                         Got                                      Want                                     Result
+----------- ------------------------------------------------------------ ---------------------------------------- ---------------------------------------- ------
+          1 Tables created                                               10                                       10                                       PASS  
+          2 Views created                                                3                                        3                                        PASS  
+          3 Proc, function and trigger                                   3                                        3                                        PASS  
+          4 Row counts                                                   10/10/10                                 10/10/10                                 PASS  
+          5 No orphan rows on any FK                                     0                                        0                                        PASS  
+          6 vwDailyActiveUsers sane                                      9 days, 0 bad                            >0 days, 0 bad                           PASS  
+          7 vwFreeVsPaidValue has both sides                             2                                        2                                        PASS  
+          8 vwSuspiciousTransactions restricts                           5 of 30                                  fewer, and > 0                           PASS  
+          9 Audit caught INSERT, UPDATE, DELETE                          3                                        3                                        PASS  
+         10 fnGeoDistanceKm Phoenix to London                            8481.06                                  8300-8500 km                             PASS  
+         11 spMonthlyActiveUsers returns months                          2                                        2                                        PASS  
+         12 spMonthlyActiveUsers rejects bad year                        50001                                    50001                                    PASS  
+         13 Fact rows within 20-50                                       48/30/23                                 each 20-50                               PASS  
+
+Summary                                                                 
+------------------------------------------------------------------------
+13 PASS, 0 FAIL                                                         

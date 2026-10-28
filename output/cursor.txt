@@ -1,0 +1,24 @@
+$ sed -n '1,10p' IFT530_EDGroup_FinalProject.sql
+/*
+** Author: Ethan Oxley, Daniel Warren
+** Group: E & D Group
+** Course: IFT 530: Advanced Database Management Systems
+** SQL Server Version: Microsoft SQL Server 2025 (Developer Edition)
+** OS: macOS 26.5.1 (SQL Server running in Microsoft's official Linux
+**     container under Docker)
+** Date: 10/27/2026
+** Assignment: Final Project
+*/
+
+$ sqlcmd ... -i IFT530_EDGroup_FinalProject.sql   (section 8)
+== Level difficulty report
+Level  Attempts   Wins  Losses  Aband   Win%  Verdict
+-----  --------  -----  ------  -----  -----  -------
+    1         4      4       0      0 100.00  ok
+    2         3      2       1      0  66.67  ok
+    3         3      2       0      1  66.67  ok
+    4         4      2       2      0  50.00  hard
+    5         4      1       3      0  25.00  CHURN RISK - lost more than won
+    6         2      1       0      1  50.00  hard
+-----  --------  -----  ------  -----  -----  -------
+Levels flagged as churn risks: 1
