@@ -50,18 +50,34 @@ Two separately graded deliverables:
 ## The server
 
 The SQL Server **image is not in this repo** — it is Microsoft's, it is
-about 2.4 GB, and nothing that size belongs in git. What is here is the
-part that makes it reproducible: `docker-compose.yml` pins the exact image
-this project was built and tested against, so the same server comes up
-anywhere.
+about 2.4 GB, and nothing that size belongs in git (GitHub refuses a file
+over 100 MB outright). What is here is the part that makes it
+reproducible: `docker-compose.yml` pins the image **by digest**, so the
+same server comes up anywhere.
+
+    mcr.microsoft.com/mssql/server
+    sha256:4bab24f36c1ecd48e85f7d37df26e6bf301641d84c3fe652f9a0dcc947d512e1
+    SQL Server 17.0.4075.5 RTM, Enterprise Developer Edition (64-bit)
+
+That is the exact server every figure in the submission was captured on.
+The digest rather than the `2025-latest` tag is deliberate — the tag moves
+whenever Microsoft republishes it, and a moving tag would quietly give the
+next person a different server.
 
     cp .env.example .env        # then put a real password in it
     source .env
-    docker compose up -d        # pulls mcr.microsoft.com/mssql/server:2025-latest
+    docker compose up -d        # pulls that digest, ~2.4 GB, once
 
 Apple Silicon runs the x86-64 image under Rosetta; there is no native
 macOS or arm64 build of SQL Server. The password is read from the
 environment and is never committed — `.env` is gitignored.
+
+If you need the image **without a network** — a machine behind a firewall,
+or an archive copy — carry it rather than committing it:
+
+    docker save mcr.microsoft.com/mssql/server:2025-latest \
+        | gzip > mssql-2025.tar.gz
+    gunzip -c mssql-2025.tar.gz | docker load
 
 Then either **run the script**, which builds the database from nothing:
 

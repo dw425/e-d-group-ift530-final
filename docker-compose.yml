@@ -2,19 +2,30 @@
 #
 # The SQL Server image itself is Microsoft's and is ~2.4 GB, so it is not
 # in this repo - nothing that size belongs in git, and it is not ours to
-# redistribute. This file pins the exact image instead, which is the
-# reproducible part: `docker compose up -d` pulls the same server on any
-# machine.
+# redistribute. This file pins the exact image instead, by digest, which
+# is the reproducible part: `docker compose up -d` pulls the identical
+# server on any machine, today or in a year.
 #
 #   export MSSQL_SA_PASSWORD='<a strong password>'   # never commit this
 #   docker compose up -d
 #   sqlcmd -S localhost,1433 -U sa -C -i IFT530_EDGroup_FinalProject.sql
 #
+# The pinned digest is the image this project was built on:
+#
+#   mcr.microsoft.com/mssql/server:2025-latest
+#   sha256:4bab24f36c1ecd48e85f7d37df26e6bf301641d84c3fe652f9a0dcc947d512e1
+#   SQL Server 17.0.4075.5 RTM, Enterprise Developer Edition (64-bit)
+#
+# The digest is deliberate: the `2025-latest` tag moves whenever Microsoft
+# republishes it, and a moving tag would mean a different server from the
+# one every figure in the submission was captured on. To take a newer
+# server, swap the digest for the tag on purpose - do not let it drift.
+#
 # Apple Silicon runs the x86-64 image under Rosetta; there is no native
 # macOS or arm64 build of SQL Server.
 services:
   sql:
-    image: mcr.microsoft.com/mssql/server:2025-latest
+    image: mcr.microsoft.com/mssql/server@sha256:4bab24f36c1ecd48e85f7d37df26e6bf301641d84c3fe652f9a0dcc947d512e1
     container_name: ift530-sql
     platform: linux/amd64
     environment:
